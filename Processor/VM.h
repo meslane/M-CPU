@@ -142,12 +142,14 @@ void incPC() //increment PC and put info into MDR
 void halt() 
 {
     printf("\n\nCPU Safely halted at PC %d\n", PC);
+    getch();
     exit(0);
 }
 
 void errorHalt(int flag) 
 {
     printf("\n\nCPU Unsafely halted at PC %d with error code %d\n", PC, flag);
+    getch();
     exit(flag);
 }
 
