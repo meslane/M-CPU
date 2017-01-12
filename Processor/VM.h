@@ -564,7 +564,7 @@ void execute() //execute stage
             jump(AH);
             break;
         //other addressing
-        case 128: //LD IX //TODO: add other addressing modes
+        case 128: //LD IX 
             IX = AH;
             break;
         case 129: //JMP IX
@@ -589,9 +589,16 @@ void execute() //execute stage
         case 134: //MOV IX PC
             PC = IX - 1;
             break;
-        case 135: //MOV IX PC
+        case 135: //MOV PC IX
             IX = PC;
             break;
+        case 136: //MOV IX SP
+            SP = IX;
+            break;
+        case 137: //MOV SP IX
+            IX = SP;
+            break;
+        
     }
 }
 
