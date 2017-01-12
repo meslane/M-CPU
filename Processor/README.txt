@@ -1,7 +1,7 @@
 Welcome to M-CPU!
 
 Dependencies: 
-Registers.h --> VM.h --> Display.h --> Reader.h --> VM.c
+Registers.h --> VM.h --> Reader.h --> VM.c
 	
 
 Programming the M-CPU:
