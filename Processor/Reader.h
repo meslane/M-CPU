@@ -32,8 +32,8 @@ void readMem()
         goto addrenter;
     }
     
-    for (i = entry; i < 16383; i++) { //%d
-        fscanf(fp, "%d%*[^\n]\n", &memory[i]); //%d
+    for (i = entry; i < 16383; i++) { 
+        fscanf(fp, "%d%*[^\n]\n", &memory[i]); 
         if (memory[i] == 31) {
             warn = 0;
         }

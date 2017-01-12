@@ -256,13 +256,13 @@ void execute() //execute stage
         case 15: //UNUSED
             return;
             break;
-        case 16: //TLD X
+        case 16: //HLD X
             *BP = X;
             break;
-        case 17: //TLD Y
+        case 17: //HLD Y
             *BP = Y;
             break;
-        case 18: //TLD Z
+        case 18: //HLD Z
             *BP = Z;
             break;
         //ALU Operations
@@ -291,16 +291,16 @@ void execute() //execute stage
         case 26: //SET AB
             assignAccumulator(2);
             break;
-        case 27: //MOV TEMP A
+        case 27: //ACC HLD
             *AP = *BP;
             break;
-        case 28: //MOV TEMP X
+        case 28: //MOV HLD X
             X = *BP;
             break;
-        case 29: //MOV TEMP Y
+        case 29: //MOV HLD Y
             Y = *BP;
             break;
-        case 30: //MOV TEMP Z
+        case 30: //MOV HLD Z
             Z = *BP;
             break;
         case 31: //HLT
