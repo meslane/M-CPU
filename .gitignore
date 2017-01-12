@@ -47,4 +47,4 @@ Temporary Items
 .apdisk
 
 #non-default stuff
-*.gch
+#*.gch
