@@ -15,3 +15,8 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+#Fixing Language
+*.h linguist-language=C
+*.c linguist-language=C
+*.mcpu linguist-language=M-CPU
