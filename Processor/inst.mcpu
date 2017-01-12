@@ -1,0 +1,8 @@
+25 SET A
+32 LD A
+2  
+33 LD X
+2  
+16 TLD X
+19 ADD
+31 HALT
