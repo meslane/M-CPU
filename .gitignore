@@ -47,5 +47,4 @@ Temporary Items
 .apdisk
 
 #non-default stuff
-reader.h.gch
-vm.h.gch
+*.gch
