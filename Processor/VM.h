@@ -179,7 +179,7 @@ void fetch() //instruction fetch function
         IR[1] = MDR;
         return;
     }
-    else if (IR[0] >= 64) { //get three bytes
+    else if (IR[0] >= 64 && IR[0] <= 127) { //get three bytes
         WM = 3;
         incPC();
         IR[1] = MDR;
@@ -211,16 +211,16 @@ void execute() //execute stage
         case 0: //NOP
             return;
             break;
-        case 1: //MOV AX (src, dest)
+        case 1: //MOV ACCX (src, dest)
             X = *AP;
             break;
-        case 2: //MOV AY 
+        case 2: //MOV ACCY 
             Y = *AP;
             break;
-        case 3: //MOV AZ
+        case 3: //MOV ACCZ
             Z = *AP;
             break;
-        case 4: //MOV AF
+        case 4: //MOV ACCF
             F = *AP;
             break;
         case 5: //ACC X
@@ -253,7 +253,7 @@ void execute() //execute stage
         case 14: //ACC F
             *AP = F;
             break;
-        case 15: //UNUSED
+        case 15: //UNUSED/NOP
             return;
             break;
         case 16: //HLD X
@@ -308,7 +308,7 @@ void execute() //execute stage
             break;
         //two byte instructions
         //Loading
-        case 32: //LD A
+        case 32: //LD ACC
             *AP = FETCH;
             break;
         case 33: //LD X
@@ -334,12 +334,12 @@ void execute() //execute stage
         * 6: 0x38
         * 7: 0x40
         */
-        case 37: //INT 0
+        case 37: //INT A
             if (testBit(F, 7) == 0) {
                 jump(vector[0]);
             } 
             else if (testBit(F, 7) != 0) {
-                if (FETCH >= 1) {
+                if (FETCH >= 1) { //mask bit accept 
                     return;
                 }
                 else {
@@ -348,7 +348,7 @@ void execute() //execute stage
             }
             break;
         
-        case 38: //INT 1
+        case 38: //INT B
             if (testBit(F, 7) == 0) {
                 jump(vector[1]);
             } 
@@ -362,7 +362,7 @@ void execute() //execute stage
             }
             break;
         
-        case 39: //INT 2
+        case 39: //INT C
             if (testBit(F, 7) == 0) {
                 jump(vector[2]);
             } 
@@ -376,7 +376,7 @@ void execute() //execute stage
             }
             break;
         
-        case 40: //INT 3
+        case 40: //INT D
             if (testBit(F, 7) == 0) {
                 jump(vector[3]);
             } 
@@ -390,7 +390,7 @@ void execute() //execute stage
             }
             break;
         
-        case 41: //INT 4
+        case 41: //INT E
             if (testBit(F, 7) == 0) {
                 jump(vector[4]);
             } 
@@ -404,7 +404,7 @@ void execute() //execute stage
             }
             break;
         
-        case 42: //INT 5
+        case 42: //INT F
             if (testBit(F, 7) == 0) {
                 jump(vector[5]);
             } 
@@ -418,7 +418,7 @@ void execute() //execute stage
             }
             break;
         
-        case 43: //INT 6
+        case 43: //INT G
             if (testBit(F, 7) == 0) {
                 jump(vector[6]);
             } 
@@ -432,7 +432,7 @@ void execute() //execute stage
             }
             break;
         
-        case 44: //INT 7
+        case 44: //INT H
             if (testBit(F, 7) == 0) {
                 jump(vector[7]);
             } 
@@ -458,13 +458,13 @@ void execute() //execute stage
         case 48: //TRP D
             jump(trap[3]);
             break;
-        //end interrupts
-        //three byte instructions //TODO; rename MMOV
-        case 64: //WRI A
-            writeData(AH, *AP);
+        //end interrupts------------
+        //three byte instructions--------------
+        case 64: //WRI ACC
+            writeData(AH, *AP); //write to RAM
             break;
-        case 65: //REA A
-            readData(AH, &*AP);
+        case 65: //REA ACC
+            readData(AH, &*AP); //read from RAM
             break;
         case 66: //WRI X
             writeData(AH, X);
@@ -518,59 +518,23 @@ void execute() //execute stage
             if (testBit(F, 6) != 0) {jump(AH);}
             else {return;}
             break;
-        //Stack
-        case 81: //SETSTK
-            SP = AH;
-            spCheck();
-            break;
-        case 82: //PUSH A
-            SP--;
-            spCheck();
-            memory[SP] = *AP;
-            break;
-        case 83: //POP A
-            *AP = memory[SP];
-            SP++;
-            break;
-        case 84: //PUSH X
-            SP--;
-            spCheck();
-            memory[SP] = X;
-            break;
-        case 85: //POP X
-            X = memory[SP];
-            SP++;
-            break;
-        case 86: //PUSH Y
-            SP--;
-            spCheck();
-            memory[SP] = Y;
-            break;
-        case 87: //POP Y
-            Y = memory[SP];
-            SP++;
-            break;
-        case 88: //PUSH Z
-            SP--;
-            spCheck();
-            memory[SP] = Z;
-            break;
-        case 89: //POP Z
-            Z = memory[SP];
-            SP++;
-            break;
-        case 90: //JMP IX AH
+        case 81: //JMP IX AH
             AH = IX + AH;
             jump(AH);
             break;
-        //other addressing
+        case 127: //SETSTK
+            SP = AH;
+            spCheck();
+            break;
+        //end three byte instructions--------
+        //other addressing (ONE BYTE)-------- //TODO; ADD IX CONDITIONAL BRANCHING
         case 128: //LD IX 
             IX = AH;
             break;
         case 129: //JMP IX
             jump(IX);
             break;
-        case 130: //JMP IX A
+        case 130: //JMP IX ACC
             AH = IX + *AP;
             jump(AH);
             break;
@@ -598,7 +562,44 @@ void execute() //execute stage
         case 137: //MOV SP IX
             IX = SP;
             break;
-        
+        //Stack--------------
+        case 138: //PUSH ACC
+            SP--;
+            spCheck();
+            memory[SP] = *AP;
+            break;
+        case 139: //POP ACC
+            *AP = memory[SP];
+            SP++;
+            break;
+        case 140: //PUSH X
+            SP--;
+            spCheck();
+            memory[SP] = X;
+            break;
+        case 141: //POP X
+            X = memory[SP];
+            SP++;
+            break;
+        case 142: //PUSH Y
+            SP--;
+            spCheck();
+            memory[SP] = Y;
+            break;
+        case 143: //POP Y
+            Y = memory[SP];
+            SP++;
+            break;
+        case 144: //PUSH Z
+            SP--;
+            spCheck();
+            memory[SP] = Z;
+            break;
+        case 145: //POP Z
+            Z = memory[SP];
+            SP++;
+            break;
+        //END STACK--------       
     }
 }
 
