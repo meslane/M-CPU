@@ -126,6 +126,16 @@ void writeData(unsigned short address, unsigned char reg) //write byte to addres
     memory[MAR] = MDR;
 }
 
+unsigned short combine(unsigned char a, unsigned char b) //high, low
+{
+    a = (unsigned short)a << 8;
+    (unsigned short)b;
+    
+    unsigned char out;
+    out = (a|b);
+    return out;
+}
+
 void spCheck() 
 {
     if (SP <= 16384) {
@@ -460,65 +470,85 @@ void execute() //execute stage
             break;
         //end interrupts------------
         //three byte instructions--------------
-        case 64: //WRI ACC
+        case 64: //WMOV ACC 
             writeData(AH, *AP); //write to RAM
             break;
-        case 65: //REA ACC
+        case 65: //RMOV ACC
             readData(AH, &*AP); //read from RAM
             break;
-        case 66: //WRI X
+        case 66: //WMOV X
             writeData(AH, X);
             break;
-        case 67: //REA X
+        case 67: //RMOV X
             readData(AH, &X);
             break;
-        case 68: //WRI Y
+        case 68: //WMOV Y
             writeData(AH, Y);
             break;
-        case 69: //REA Y
+        case 69: //RMOV Y
             readData(AH, &Y);
             break;
-        case 70: //WRI Z
+        case 70: //WMOV Z
             writeData(AH, Z);
             break;
-        case 71: //REA Z
+        case 71: //RMOV Z
             readData(AH, &Z);
             break;
-        case 72: //WRI F
+        case 72: //WMOV F
             writeData(AH, Z);
             break;
-        case 73: //REA F
+        case 73: //RMOV F
             readData(AH, &F);
             break;
-        //Conditional Branching
-        case 74: //JMP
+        case 74: //WMOV SP LOW (moves lowest byte of SP into memory)
+            writeData(AH, SP&0xff);
+            break;
+        case 75: //WMOV SP HIGH (moves highest byte of SP into memory)
+            writeData(AH, (SP >> 8)&0xff);
+            break;
+            //TODO: the other RMOVs for SP
+        
+        
+        //Conditional Branching (Bits 4 and 7 are not used for branching)
+        case 80: //JMP
             jump(AH);
             break;
-        case 75: //JMP P
+        case 81: //JMP P
             if (testBit(F, 0) != 0) {jump(AH);}
             else {return;}
             break;
-        case 76: //JMP O
+        case 82: //JMP O
             if (testBit(F, 1) != 0) {jump(AH);}
             else {return;}
             break;
-        case 77: //JMP U
+        case 83: //JMP U
             if (testBit(F, 2) != 0) {jump(AH);}
             else {return;}
             break;
-        case 78: //JMP Z
+        case 84: //JMP Z
             if (testBit(F, 3) != 0) {jump(AH);}
             else {return;}
             break;
-        case 79: //JMP UD1
+        case 85: //JMP UD1
             if (testBit(F, 5) != 0) {jump(AH);}
             else {return;}
             break;
-        case 80: //JMP UD2
+        case 86: //JMP UD2
             if (testBit(F, 6) != 0) {jump(AH);}
             else {return;}
             break;
-        case 81: //JMP IX AH
+        case 87: //LD IX 
+            IX = AH;
+            break;
+        case 88: //LD FX
+            F = (AH >> 8)&0xff; //high
+            X = AH&0xff; //low
+            break;
+        case 89: //LD YZ
+            Y = (AH >> 8)&0xff;
+            Z = AH&0xff;
+            break;
+        case 126: //JMP IX AH
             AH = IX + AH;
             jump(AH);
             break;
@@ -528,8 +558,8 @@ void execute() //execute stage
             break;
         //end three byte instructions--------
         //other addressing (ONE BYTE)-------- //TODO; ADD IX CONDITIONAL BRANCHING
-        case 128: //LD IX 
-            IX = AH;
+        case 128: //NOP
+            return;
             break;
         case 129: //JMP IX
             jump(IX);
@@ -600,6 +630,75 @@ void execute() //execute stage
             SP++;
             break;
         //END STACK--------       
+        //IX BRANCHING-----
+        case 146: //IX JMP P
+            if (testBit(F, 0) != 0) {jump(IX);}
+            else {return;}
+            break;
+        case 147: //IX JMP O
+            if (testBit(F, 1) != 0) {jump(IX);}
+            else {return;}
+            break;
+        case 148: //IX JMP U
+            if (testBit(F, 2) != 0) {jump(IX);}
+            else {return;}
+            break;
+        case 149: //IX JMP Z
+            if (testBit(F, 3) != 0) {jump(IX);}
+            else {return;}
+            break;
+        case 150: //IX JMP UD1
+            if (testBit(F, 5) != 0) {jump(IX);}
+            else {return;}
+            break;
+        case 151: //IX JMP UD2
+            if (testBit(F, 6) != 0) {jump(IX);}
+            else {return;}
+            break;
+        //END IX BRANCHING
+        //16 bit register stuff
+        case 152: //MOV FX IX
+            IX = combine(F, X);
+            break;
+        case 153: //MOV YZ IX
+            IX = combine(Y, Z);
+            break;
+        case 154: //MOV FX SP
+            SP = combine(F, X);
+            break;
+        case 155: //MOV YZ SP
+            SP = combine(Y, Z);
+            break;
+        case 156: //MOV FX PC
+            PC = combine(F, X);
+            break;
+        case 157: //MOV YZ PC
+            PC = combine(Y, Z);
+            break;
+        case 158: //MOV IX FX
+            F = (IX >> 8)&0xff; //high 
+            X = IX&0xff; //low
+            break;
+        case 159: //MOV IX YZ
+            Y = (IX >> 8)&0xff;
+            Z = IX&0xff;
+            break;
+        case 160: //MOV SP FX
+            F = (SP >> 8)&0xff;
+            X = SP&0xff;
+            break;
+        case 161: //MOV SP YZ
+            Y = (SP >> 8)&0xff;
+            Z = SP&0xff;
+            break;
+        case 162: //MOV PC FX
+            F = (PC >> 8)&0xff;
+            X = PC&0xff;
+            break;
+        case 163: //MOV PC YZ
+            Y = (PC >> 8)&0xff;
+            Z = PC&0xff;
+            break;
     }
 }
 
