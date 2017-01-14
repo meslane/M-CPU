@@ -19,6 +19,8 @@ void readMem()
     int i;
     int warn = 1;
     int warnb = 1;
+    int warnca = 0;
+    int warncb = 1;
     char a;
     char b;
     
@@ -40,23 +42,31 @@ void readMem()
         if (memory[i] == 25) {
             warnb = 0;
         }
+        if (memory[i] == 127) {
+            warnca = 1;
+        }
+        if (memory[i] >= 138 && memory[i] <= 145) {
+            warncb = 0;
+        }
     }
     
     //error detector
-    if (warn == 1) {
-        printf("\nWARNING: Machine code file does not contain a HALT instruction, proceed?: Y/N\n");
-        a = getch();
-        if (a == 'y' | a == 'Y') {
-            goto warnb;
-        }
-        else {
-            exit(0);
-        }
-    }
+    if (warn == 1 | warnb == 1 | (warnca == 0 && warncb == 0)) {
+        printf("\n");
     
-    warnb:
-    if (warnb == 1) {
-        printf("\nWARNING: Machine code does not assign an accumulator, proceed?: Y/N\n");
+        if (warn == 1) {
+            printf("WARNING: Machine code file does not contain a HALT instruction\n");
+        }
+   
+        if (warnb == 1) {
+            printf("WARNING: Machine code does not assign an accumulator\n");
+        }
+        
+        if (warnca == 0 && warncb == 0) {
+            printf("WARNING: Machine code refrences the stack but does not set it\n");
+        }
+        
+        printf("Continue?: Y/N\n");
         a = getch();
         if (a == 'y' | a == 'Y') {
             goto success;
@@ -64,9 +74,6 @@ void readMem()
         else {
             exit(0);
         }
-    }
-    else {
-        goto success;
     }
     //---------------
     

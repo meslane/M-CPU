@@ -136,11 +136,14 @@ unsigned short combine(unsigned char a, unsigned char b) //high, low
     return out;
 }
 
-void spCheck() 
+char spCheck() 
 {
-    if (SP <= 16384) {
+    char a;
+    if (SP <= 16384 | SP >= 32016) {
         jump(trap[1]);
+        a = 1;
     }
+    return a;
 }
 
 void incPC() //increment PC and put info into MDR
@@ -216,6 +219,7 @@ void decode() //decode stage
 
 void execute() //execute stage
 {
+    char temp;
     switch (IR[0]) {
         //one byte instructions
         case 0: //NOP
@@ -595,7 +599,10 @@ void execute() //execute stage
         //Stack--------------
         case 138: //PUSH ACC
             SP--;
-            spCheck();
+            temp = spCheck();
+            if (temp == 1) {
+                break;
+            }
             memory[SP] = *AP;
             break;
         case 139: //POP ACC
@@ -604,7 +611,10 @@ void execute() //execute stage
             break;
         case 140: //PUSH X
             SP--;
-            spCheck();
+            temp = spCheck();
+            if (temp == 1) {
+                break;
+            }
             memory[SP] = X;
             break;
         case 141: //POP X
@@ -613,7 +623,10 @@ void execute() //execute stage
             break;
         case 142: //PUSH Y
             SP--;
-            spCheck();
+            temp = spCheck();
+            if (temp == 1) {
+                break;
+            }
             memory[SP] = Y;
             break;
         case 143: //POP Y
@@ -622,7 +635,10 @@ void execute() //execute stage
             break;
         case 144: //PUSH Z
             SP--;
-            spCheck();
+            temp = spCheck();
+            if (temp == 1) {
+                break;
+            }
             memory[SP] = Z;
             break;
         case 145: //POP Z
