@@ -24,6 +24,8 @@ unsigned short AH; //Address Hold
 unsigned char FETCH; //operand hold
 char WM; //1, 2, or 3 byte word mode 
 
+char jmpHld = 0; //jump hold buffer
+
 void registerDump() //prints the data in programmer accessable registers 
 {
     printf("\rA:%d|AB:%d|X:%d|Y:%d|Z:%d|F:%d|SP:%d|IX:%d|PC:%d\r", A, AB, X, Y, Z, F, SP, IX, PC);

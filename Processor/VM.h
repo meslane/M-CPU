@@ -102,8 +102,9 @@ void assignAccumulator(char acc) {
 
 void jump(unsigned short address) //Jump PC to given address
 {
-    PC = address - 1;
+    PC = address ;
     MDR = memory[PC];
+    jmpHld = 1;
 }
 
 //functions
@@ -148,8 +149,10 @@ char spCheck()
 
 void incPC() //increment PC and put info into MDR
 {
-    PC++;
-    MDR = memory[PC];
+    if (jmpHld == 0) {
+        PC++;
+        MDR = memory[PC];
+    }
 }
 
 void halt() 
@@ -724,4 +727,5 @@ void run()
     decode();
     execute();
     incPC();
+    jmpHld = 0;
 }
