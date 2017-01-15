@@ -234,59 +234,59 @@ void execute() //execute stage
         case 0: //NOP
             return;
             break;
-        case 1: //MOV ACC X (src, dest)
-            X = *AP;
+        case 1: //MOV A X (src, dest)
+            X = A;
             break;
-        case 2: //MOV ACC Y 
-            Y = *AP;
+        case 2: //MOV A Y 
+            Y = A;
             break;
-        case 3: //MOV ACC Z
-            Z = *AP;
+        case 3: //MOV A Z
+            Z = A;
             break;
-        case 4: //MOV ACC F
-            F = *AP;
+        case 4: //MOV A F
+            F = A;
             break;
-        case 5: //ACC X
-            *AP = X;
+        case 5: //MOV X A
+            A = X;
             break;
-        case 6: //MOV XY
+        case 6: //MOV X Y
             Y = X;
             break;
-        case 7: //MOV XZ
+        case 7: //MOV X Z
             Z = X;
             break;
-        case 8: //ACC Y
-            *AP = Y;
+        case 8: //MOV Y A
+            A = Y;
             break;
-        case 9: //MOV YX
+        case 9: //MOV Y X
             X = Y;
             break;
-        case 10: //MOV YZ
+        case 10: //MOV Y Z
             Z = Y;
             break;
         case 11: //ACC Z
-            *AP = Z;
+            A = Z;
             break;
-        case 12: //MOV ZX
+        case 12: //MOV Z X
             X = Z;
             break;
-        case 13: //MOV ZY
+        case 13: //MOV Z Y
             Y = Z;
             break;
-        case 14: //ACC F
-            *AP = F;
+        case 14: //MOV F A
+            A = F;
             break;
-        case 15: //UNUSED/NOP
-            return;
+        case 15: //MOV A AB
+            AB = A;
             break;
-        case 16: //MOV X B
-            *BP = X;
+        case 16: //MOV X AB
+            AB = X;
             break;
-        case 17: //MOV Y B
-            *BP = Y;
+        case 17: //MOV Y AB
+            AB = Y;
             break;
-        case 18: //MOV Z B
-            *BP = Z;
+        case 18: //MOV Z AB
+            AB = Z;
             break;
     //ALU Operations
         case 19: //ADD
@@ -315,17 +315,17 @@ void execute() //execute stage
             assignAccumulator(2);
             break;
     //MORE MOV
-        case 27: //MOV B A
-            *AP = *BP;
+        case 27: //MOV AB A
+            A = AB;
             break;
-        case 28: //MOV B X
-            X = *BP;
+        case 28: //MOV AB X
+            X = AB;
             break;
-        case 29: //MOV B Y
-            Y = *BP;
+        case 29: //MOV AB Y
+            Y = AB;
             break;
-        case 30: //MOV B Z
-            Z = *BP;
+        case 30: //MOV AB Z
+            Z = AB;
             break;
     //HALT
         case 31: //HLT
@@ -420,16 +420,16 @@ void execute() //execute stage
             Z = PC&0xff;
             break;
     //STACK
-        case 58: //PUSH ACC
+        case 58: //PUSH F
             SP--;
             temp = spCheck();
             if (temp == 1) {
                 break;
             }
-            memory[SP] = *AP;
+            memory[SP] = F;
             break;
-        case 59: //POP ACC
-            *AP = memory[SP];
+        case 59: //POP F
+            F = memory[SP];
             SP++;
             break;
         case 60: //PUSH X
@@ -469,11 +469,11 @@ void execute() //execute stage
             SP++;
             break;
     //INC
-        case 66: //INC ACC
-            (*AP)++;
+        case 66: //INC A
+            A++;
             break;
-        case 67: //INC HLD
-            (*BP)++;
+        case 67: //INC AB
+            AB++;
             break;
         case 68: //INC X
             X++;
@@ -492,10 +492,10 @@ void execute() //execute stage
             break;
     //DEC
         case 73: //DEC ACC
-            (*AP)--;
+            A--;
             break;
-        case 74: //DEC HLD
-            (*BP)--;
+        case 74: //DEC AB
+            AB--;
             break;
         case 75: //DEC X
             X--;
@@ -566,99 +566,148 @@ void execute() //execute stage
             else {return;}
             break;
     //Indexed addressing
-        case 93: //IX MST ACC
-            writeData(IX, *AP); //write to RAM
+        case 93: //IX MST A
+            writeData(IX, A); //write to RAM
             break;
-        case 94: //IX MLD ACC
-            readData(IX, &*AP); //read from RAM
+        case 94: //IX MLD A
+            readData(IX, &A); //read from RAM
             break;
-        case 95: //IX MST X
+        case 95: //IX MST AB
+            writeData(IX, AB); 
+            break;
+        case 96: //IX MLD AB
+            readData(IX, &AB); 
+            break;
+        case 97: //IX MST X
             writeData(IX, X); 
             break;
-        case 96: //IX MLD X
+        case 98: //IX MLD X
             readData(IX, &X); 
             break;
-        case 97: //IX MST Y
+        case 99: //IX MST Y
             writeData(IX, Y); 
             break;
-        case 98: //IX MLD Y
+        case 100: //IX MLD Y
             readData(IX, &Y); 
             break;
-        case 99: //IX MST Z
+        case 101: //IX MST Z
             writeData(IX, Z); 
             break;
-        case 100: //IX MLD Z
+        case 102: //IX MLD Z
             readData(IX, &Z); 
             break;
-        case 101: //IX MST F
+        case 103: //IX MST F
             writeData(IX, F); 
             break;
-        case 102: //IX MLD F
+        case 104: //IX MLD F
             readData(IX, &F); 
             break;
-        case 103: //IX MLD SP LOW (moves lowest byte of SP into memory)
+        case 105: //IX MLD SP LOW (moves lowest byte of SP into memory)
             writeData(IX, SP&0xff);
             break;
-        case 104: //IX MLD SP HIGH (moves highest byte of SP into memory)
+        case 106: //IX MLD SP HIGH (moves highest byte of SP into memory)
             writeData(IX, (SP >> 8)&0xff);
             break;
-        case 105: //IX MLD IY LOW
+        case 107: //IX MLD IY LOW
             writeData(IX, IY&0xff);
             break;
-        case 106: //IX MLD IY HIGH 
+        case 108: //IX MLD IY HIGH 
             writeData(IX, (IY >> 8)&0xff);
             break;
     //Index + Base addressing
-        case 107: //IB MST ACC
-            writeData(IX + IY, *AP); //write to RAM
+        case 109: //IB MST A
+            writeData(IX + IY, A); //write to RAM
             break;
-        case 108: //IB MLD ACC
-            readData(IX + IY, &*AP); //read from RAM
+        case 110: //IB MLD A
+            readData(IX + IY, &A); //read from RAM
             break;
-        case 109: //IB MST X
+        case 111: //IB MST AB
+            writeData(IX + IY, AB); 
+            break;
+        case 112: //IB MLD AB
+            readData(IX + IY, &AB); 
+            break;
+        case 113: //IB MST X
             writeData(IX + IY, X); 
             break;
-        case 110: //IB MLD X
+        case 114: //IB MLD X
             readData(IX + IY, &X); 
             break;
-        case 111: //IB MST Y
+        case 115: //IB MST Y
             writeData(IX + IY, Y); 
             break;
-        case 112: //IB MLD Y
+        case 116: //IB MLD Y
             readData(IX + IY, &Y); 
             break;
-        case 113: //IB MST Z
+        case 117: //IB MST Z
             writeData(IX + IY, Z); 
             break;
-        case 114: //IB MLD Z
+        case 118: //IB MLD Z
             readData(IX + IY, &Z); 
             break;
-        case 115: //IB MST F
+        case 119: //IB MST F
             writeData(IX + IY, F); 
             break;
-        case 116: //IB MLD F
+        case 120: //IB MLD F
             readData(IX + IY, &F); 
             break;
-        case 117: //IB MLD SP LOW (moves lowest byte of SP into memory)
+        case 121: //IB MLD SP LOW (moves lowest byte of SP into memory)
             writeData(IX + IY, SP&0xff);
             break;
-        case 118: //IB MLD SP HIGH (moves highest byte of SP into memory)
+        case 122: //IB MLD SP HIGH (moves highest byte of SP into memory)
             writeData(IX + IY, (SP >> 8)&0xff);
             break;
-    //two-byte instructions
-        case 128: //LD ACC
-            *AP = FETCH;
+    //STACK ACCUMULATORS
+        case 123: //PUSH A
+            SP--;
+            temp = spCheck();
+            if (temp == 1) {
+                break;
+            }
+            memory[SP] = A;
             break;
-        case 129: //LD X
+        case 124: //POP A
+            A = memory[SP];
+            SP++;
+            break;
+        case 125: //PUSH AB
+            SP--;
+            temp = spCheck();
+            if (temp == 1) {
+                break;
+            }
+            memory[SP] = AB;
+            break;
+        case 126: //POP AB
+            AB = memory[SP];
+            SP++;
+            break;
+    //CLEAR
+        case 127: //CLR ALL
+            A = 0;
+            AB = 0;
+            X = 0;
+            Y = 0;
+            Z = 0;
+            IX = 0;
+            IY = 0;
+    //two-byte instructions
+        case 128: //LD A
+            A = FETCH;
+            break;
+        case 129: //LD AB
+            AB = FETCH;
+            break;
+        case 130: //LD X
             X = FETCH;
             break;
-        case 130: //LD Y
+        case 131: //LD Y
             Y = FETCH;
             break;
-        case 131: //LD Z
+        case 132: //LD Z
             Z = FETCH;
             break;
-        case 132: //LD F
+        case 133: //LD F
             F = FETCH;
             break;
     //Interrupts (software and hardware)
@@ -672,7 +721,7 @@ void execute() //execute stage
         * 6: 0x38
         * 7: 0x40
         */
-        case 133: //INT A
+        case 134: //INT A
             if (testBit(F, 7) == 0) {
                 jump(vector[0]);
             } 
@@ -686,7 +735,7 @@ void execute() //execute stage
             }
             break;
         
-        case 134: //INT B
+        case 135: //INT B
             if (testBit(F, 7) == 0) {
                 jump(vector[1]);
             } 
@@ -700,7 +749,7 @@ void execute() //execute stage
             }
             break;
         
-        case 135: //INT C
+        case 136: //INT C
             if (testBit(F, 7) == 0) {
                 jump(vector[2]);
             } 
@@ -714,7 +763,7 @@ void execute() //execute stage
             }
             break;
         
-        case 136: //INT D
+        case 137: //INT D
             if (testBit(F, 7) == 0) {
                 jump(vector[3]);
             } 
@@ -728,7 +777,7 @@ void execute() //execute stage
             }
             break;
         
-        case 137: //INT E
+        case 138: //INT E
             if (testBit(F, 7) == 0) {
                 jump(vector[4]);
             } 
@@ -742,7 +791,7 @@ void execute() //execute stage
             }
             break;
         
-        case 138: //INT F
+        case 139: //INT F
             if (testBit(F, 7) == 0) {
                 jump(vector[5]);
             } 
@@ -756,7 +805,7 @@ void execute() //execute stage
             }
             break;
         
-        case 139: //INT G
+        case 140: //INT G
             if (testBit(F, 7) == 0) {
                 jump(vector[6]);
             } 
@@ -770,7 +819,7 @@ void execute() //execute stage
             }
             break;
         
-        case 140: //INT H
+        case 141: //INT H
             if (testBit(F, 7) == 0) {
                 jump(vector[7]);
             } 
@@ -784,16 +833,16 @@ void execute() //execute stage
             }
             break;
     //TRAPs 
-        case 141: //TRP A
+        case 142: //TRP A
             jump(trap[0]);
             break;
-        case 142: //TRP B
+        case 143: //TRP B
             jump(trap[1]);
             break;
-        case 143: //TRP C
+        case 144: //TRP C
             jump(trap[2]);
             break;
-        case 144: //TRP D
+        case 145: //TRP D
             jump(trap[3]);
             break;
     //Three byte instructions
@@ -852,10 +901,10 @@ void execute() //execute stage
             break;
     //Load/Store 
         case 205: //MST ACC
-            writeData(AH, *AP); //write to RAM
+            writeData(AH, A); //write to RAM
             break;
         case 206: //MLD ACC
-            readData(AH, &*AP); //read from RAM
+            readData(AH, &A); //read from RAM
             break;
         case 207: //MST X
             writeData(AH, X); 
@@ -899,8 +948,23 @@ void execute() //execute stage
         case 220: //MLD IX HIGH 
             writeData(AH, (IX >> 8)&0xff);
             break;
-        
-        
+    //16 bit loads
+        case 221: //LD IX 
+            IX = AH;
+            break;
+        case 222: //LD FX
+            F = (AH >> 8)&0xff; //high
+            X = AH&0xff; //low
+            break;
+        case 223: //LD YZ
+            Y = (AH >> 8)&0xff;
+            Z = AH&0xff;
+            break;
+    //Set stack
+        case 255: //SETSTK
+            SP = AH;
+            spCheck();
+            break;
     }
 }
 

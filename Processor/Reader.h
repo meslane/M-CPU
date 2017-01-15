@@ -42,10 +42,10 @@ void readMem()
         if (memory[i] == 25) {
             warnb = 0;
         }
-        if (memory[i] == 127) {
+        if (memory[i] == 255) {
             warnca = 1;
         }
-        if (memory[i] >= 138 && memory[i] <= 145) {
+        if (memory[i] >= 58 && memory[i] <= 65) {
             warncb = 0;
         }
     }
