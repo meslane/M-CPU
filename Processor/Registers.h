@@ -18,6 +18,7 @@ unsigned short MAR;
 unsigned short SP; //Stack Pointer
 //Index Register
 unsigned short IX;
+unsigned short IY;
 //Control Registers
 unsigned char IR[2]; //Instruction register
 unsigned short AH; //Address Hold
@@ -26,7 +27,9 @@ char WM; //1, 2, or 3 byte word mode
 
 char jmpHld = 0; //jump hold buffer
 
+long ticks;
+
 void registerDump() //prints the data in programmer accessable registers 
 {
-    printf("\rA:%d|AB:%d|X:%d|Y:%d|Z:%d|F:%d|SP:%d|IX:%d|PC:%d\r", A, AB, X, Y, Z, F, SP, IX, PC);
+    printf("A:%d|AB:%d|X:%d|Y:%d|Z:%d|F:%d|SP:%d|IX:%d|PC:%d|Ticks:%d|\r", A, AB, X, Y, Z, F, SP, IX, PC, ticks);
 }
