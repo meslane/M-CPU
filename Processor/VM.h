@@ -512,57 +512,57 @@ void execute() //execute stage
         case 79: //DEC IY
             IY--;
             break;
-    //BRANCHING
-        case 80: //JMP
-            jump(AH);
+    //IX BRANCHING
+        case 80: //JMP 
+            jump(IX);
             break;
         case 81: //JMP P
-            if (testBit(F, 0) != 0) {jump(AH);} //parity
+            if (testBit(F, 0) != 0) {jump(IX);} //parity
             else {return;}
             break;
         case 82: //JMP O
-            if (testBit(F, 1) != 0) {jump(AH);} //Overflow
+            if (testBit(F, 1) != 0) {jump(IX);} //Overflow
             else {return;}
             break;
         case 83: //JMP U
-            if (testBit(F, 2) != 0) {jump(AH);} //Underflow
+            if (testBit(F, 2) != 0) {jump(IX);} //Underflow
             else {return;}
             break;
         case 84: //JMP Z
-            if (testBit(F, 3) != 0) {jump(AH);} //Zero
+            if (testBit(F, 3) != 0) {jump(IX);} //Zero
             else {return;}
             break;
         case 85: //JMP UD1
-            if (testBit(F, 5) != 0) {jump(AH);} //User-defined
+            if (testBit(F, 5) != 0) {jump(IX);} //User-defined
             else {return;}
             break;
         case 86: //JMP UD2
-            if (testBit(F, 6) != 0) {jump(AH);} //User-defined
+            if (testBit(F, 6) != 0) {jump(IX);} //User-defined
             else {return;}
             break;
     //inverse conditional branching
         case 87: //JMP NP
-            if (testBitZero(F, 1) == 0) {jump(AH);} //parity
+            if (testBitZero(F, 1) == 0) {jump(IX);} //parity
             else {return;}
             break;
         case 88: //JMP NO
-            if (testBitZero(F, 2) == 0) {jump(AH);} //Overflow
+            if (testBitZero(F, 2) == 0) {jump(IX);} //Overflow
             else {return;}
             break;
         case 89: //JMP NU
-            if (testBitZero(F, 4) == 0) {jump(AH);} //Underflow
+            if (testBitZero(F, 4) == 0) {jump(IX);} //Underflow
             else {return;}
             break;
         case 90: //JMP NZ
-            if (testBitZero(F, 8) == 0) {jump(AH);} //Zero
+            if (testBitZero(F, 8) == 0) {jump(IX);} //Zero
             else {return;}
             break;
         case 91: //JMP NUD1
-            if (testBitZero(F, 32) == 0) {jump(AH);} //User-defined
+            if (testBitZero(F, 32) == 0) {jump(IX);} //User-defined
             else {return;}
             break;
         case 92: //JMP NUD2
-            if (testBitZero(F, 64) == 0) {jump(AH);} //User-defined
+            if (testBitZero(F, 64) == 0) {jump(IX);} //User-defined
             else {return;}
             break;
     //Indexed addressing
@@ -596,13 +596,311 @@ void execute() //execute stage
         case 102: //IX MLD F
             readData(IX, &F); 
             break;
+        case 103: //IX MLD SP LOW (moves lowest byte of SP into memory)
+            writeData(IX, SP&0xff);
+            break;
+        case 104: //IX MLD SP HIGH (moves highest byte of SP into memory)
+            writeData(IX, (SP >> 8)&0xff);
+            break;
+        case 105: //IX MLD IY LOW
+            writeData(IX, IY&0xff);
+            break;
+        case 106: //IX MLD IY HIGH 
+            writeData(IX, (IY >> 8)&0xff);
+            break;
     //Index + Base addressing
+        case 107: //IB MST ACC
+            writeData(IX + IY, *AP); //write to RAM
+            break;
+        case 108: //IB MLD ACC
+            readData(IX + IY, &*AP); //read from RAM
+            break;
+        case 109: //IB MST X
+            writeData(IX + IY, X); 
+            break;
+        case 110: //IB MLD X
+            readData(IX + IY, &X); 
+            break;
+        case 111: //IB MST Y
+            writeData(IX + IY, Y); 
+            break;
+        case 112: //IB MLD Y
+            readData(IX + IY, &Y); 
+            break;
+        case 113: //IB MST Z
+            writeData(IX + IY, Z); 
+            break;
+        case 114: //IB MLD Z
+            readData(IX + IY, &Z); 
+            break;
+        case 115: //IB MST F
+            writeData(IX + IY, F); 
+            break;
+        case 116: //IB MLD F
+            readData(IX + IY, &F); 
+            break;
+        case 117: //IB MLD SP LOW (moves lowest byte of SP into memory)
+            writeData(IX + IY, SP&0xff);
+            break;
+        case 118: //IB MLD SP HIGH (moves highest byte of SP into memory)
+            writeData(IX + IY, (SP >> 8)&0xff);
+            break;
+    //two-byte instructions
+        case 128: //LD ACC
+            *AP = FETCH;
+            break;
+        case 129: //LD X
+            X = FETCH;
+            break;
+        case 130: //LD Y
+            Y = FETCH;
+            break;
+        case 131: //LD Z
+            Z = FETCH;
+            break;
+        case 132: //LD F
+            F = FETCH;
+            break;
+    //Interrupts (software and hardware)
+        /*Vectors:
+        * 0: 0x08
+        * 1: 0x10
+        * 2: 0x18
+        * 3: 0x20
+        * 4: 0x28
+        * 5: 0x30
+        * 6: 0x38
+        * 7: 0x40
+        */
+        case 133: //INT A
+            if (testBit(F, 7) == 0) {
+                jump(vector[0]);
+            } 
+            else if (testBit(F, 7) != 0) {
+                if (FETCH >= 1) { //mask bit accept 
+                    return;
+                }
+                else {
+                    jump(vector[0]);
+                }
+            }
+            break;
+        
+        case 134: //INT B
+            if (testBit(F, 7) == 0) {
+                jump(vector[1]);
+            } 
+            else if (testBit(F, 7) != 0) {
+                if (FETCH >= 1) {
+                    return;
+                }
+                else {
+                    jump(vector[1]);
+                }
+            }
+            break;
+        
+        case 135: //INT C
+            if (testBit(F, 7) == 0) {
+                jump(vector[2]);
+            } 
+            else if (testBit(F, 7) != 0) {
+                if (FETCH >= 1) {
+                    return;
+                }
+                else {
+                    jump(vector[2]);
+                }
+            }
+            break;
+        
+        case 136: //INT D
+            if (testBit(F, 7) == 0) {
+                jump(vector[3]);
+            } 
+            else if (testBit(F, 7) != 0) {
+                if (FETCH >= 1) {
+                    return;
+                }
+                else {
+                    jump(vector[3]);
+                }
+            }
+            break;
+        
+        case 137: //INT E
+            if (testBit(F, 7) == 0) {
+                jump(vector[4]);
+            } 
+            else if (testBit(F, 7) != 0) {
+                if (FETCH >= 1) {
+                    return;
+                }
+                else {
+                    jump(vector[4]);
+                }
+            }
+            break;
+        
+        case 138: //INT F
+            if (testBit(F, 7) == 0) {
+                jump(vector[5]);
+            } 
+            else if (testBit(F, 7) != 0) {
+                if (FETCH >= 1) {
+                    return;
+                }
+                else {
+                    jump(vector[5]);
+                }
+            }
+            break;
+        
+        case 139: //INT G
+            if (testBit(F, 7) == 0) {
+                jump(vector[6]);
+            } 
+            else if (testBit(F, 7) != 0) {
+                if (FETCH >= 1) {
+                    return;
+                }
+                else {
+                    jump(vector[6]);
+                }
+            }
+            break;
+        
+        case 140: //INT H
+            if (testBit(F, 7) == 0) {
+                jump(vector[7]);
+            } 
+            else if (testBit(F, 7) != 0) {
+                if (FETCH >= 1) {
+                    return;
+                }
+                else {
+                    jump(vector[7]);
+                }
+            }
+            break;
+    //TRAPs 
+        case 141: //TRP A
+            jump(trap[0]);
+            break;
+        case 142: //TRP B
+            jump(trap[1]);
+            break;
+        case 143: //TRP C
+            jump(trap[2]);
+            break;
+        case 144: //TRP D
+            jump(trap[3]);
+            break;
+    //Three byte instructions
+    //AH BRANCHING
+        case 192: //JMP 
+            jump(AH);
+            break;
+        case 193: //JMP P
+            if (testBit(F, 0) != 0) {jump(AH);} //parity
+            else {return;}
+            break;
+        case 194: //JMP O
+            if (testBit(F, 1) != 0) {jump(AH);} //Overflow
+            else {return;}
+            break;
+        case 195: //JMP U
+            if (testBit(F, 2) != 0) {jump(AH);} //Underflow
+            else {return;}
+            break;
+        case 196: //JMP Z
+            if (testBit(F, 3) != 0) {jump(AH);} //Zero
+            else {return;}
+            break;
+        case 197: //JMP UD1
+            if (testBit(F, 5) != 0) {jump(AH);} //User-defined
+            else {return;}
+            break;
+        case 198: //JMP UD2
+            if (testBit(F, 6) != 0) {jump(AH);} //User-defined
+            else {return;}
+            break;
+    //inverse conditional branching
+        case 199: //JMP NP
+            if (testBitZero(F, 1) == 0) {jump(AH);} //parity
+            else {return;}
+            break;
+        case 200: //JMP NO
+            if (testBitZero(F, 2) == 0) {jump(AH);} //Overflow
+            else {return;}
+            break;
+        case 201: //JMP NU
+            if (testBitZero(F, 4) == 0) {jump(AH);} //Underflow
+            else {return;}
+            break;
+        case 202: //JMP NZ
+            if (testBitZero(F, 8) == 0) {jump(AH);} //Zero
+            else {return;}
+            break;
+        case 203: //JMP NUD1
+            if (testBitZero(F, 32) == 0) {jump(AH);} //User-defined
+            else {return;}
+            break;
+        case 204: //JMP NUD2
+            if (testBitZero(F, 64) == 0) {jump(AH);} //User-defined
+            else {return;}
+            break;
+    //Load/Store 
+        case 205: //MST ACC
+            writeData(AH, *AP); //write to RAM
+            break;
+        case 206: //MLD ACC
+            readData(AH, &*AP); //read from RAM
+            break;
+        case 207: //MST X
+            writeData(AH, X); 
+            break;
+        case 208: //MLD X
+            readData(AH, &X); 
+            break;
+        case 209: //MST Y
+            writeData(AH, Y); 
+            break;
+        case 210: //MLD Y
+            readData(AH, &Y); 
+            break;
+        case 211: //MST Z
+            writeData(AH, Z); 
+            break;
+        case 212: //MLD Z
+            readData(AH, &Z); 
+            break;
+        case 213: //MST F
+            writeData(AH, F); 
+            break;
+        case 214: //MLD F
+            readData(AH, &F); 
+            break;
+        case 215: //MLD SP LOW (moves lowest byte of SP into memory)
+            writeData(AH, SP&0xff);
+            break;
+        case 216: //MLD SP HIGH (moves highest byte of SP into memory)
+            writeData(AH, (SP >> 8)&0xff);
+            break;
+        case 217: //MLD IY LOW
+            writeData(AH, IY&0xff);
+            break;
+        case 218: //MLD IY HIGH 
+            writeData(AH, (IY >> 8)&0xff);
+            break;
+        case 219: //MLD IX LOW
+            writeData(AH, IX&0xff);
+            break;
+        case 220: //MLD IX HIGH 
+            writeData(AH, (IX >> 8)&0xff);
+            break;
         
         
-        
-        //two-byte instructions
-        case 128: 
-         
     }
 }
 
