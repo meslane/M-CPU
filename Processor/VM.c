@@ -4,6 +4,7 @@ int main(void)
 {
     //pre-execution
     readMem();
+    hideCursor();
     printf("\n\n");
 
     //execution  

@@ -87,7 +87,8 @@ unsigned char testBitZero(unsigned char byte, unsigned char nval)
 }
 
 //Accumulator Handling
-void assignAccumulator(char acc) {
+void assignAccumulator(char acc) 
+{
     if (acc == 1) {
         AP = &A;
         BP = &AB;
@@ -110,7 +111,8 @@ void jump(unsigned short address) //Jump PC to given address
 }
 
 //functions
-void readData(unsigned short address, unsigned char *reg) { //new and improve getData with pointer
+void readData(unsigned short address, unsigned char *reg) //new and improve getData with pointer
+{ 
     if (address < 16383) {
         jump(trap[0]);
     }
@@ -163,6 +165,7 @@ void incPC() //increment PC and put info into MDR
 
 void halt() 
 {
+    showCursor();
     printf("\n\nCPU Safely halted at PC %d\n", PC);
     getch();
     exit(0);
@@ -170,6 +173,7 @@ void halt()
 
 void errorHalt(int flag) 
 {
+    showCursor();
     printf("\n\nCPU Unsafely halted at PC %d with error code %d\n", PC, flag);
     getch();
     exit(flag);
@@ -952,11 +956,14 @@ void execute() //execute stage
         case 221: //LD IX 
             IX = AH;
             break;
-        case 222: //LD FX
+        case 222: //LD IY
+            IY = AH;
+            break;
+        case 223: //LD FX
             F = (AH >> 8)&0xff; //high
             X = AH&0xff; //low
             break;
-        case 223: //LD YZ
+        case 224: //LD YZ
             Y = (AH >> 8)&0xff;
             Z = AH&0xff;
             break;
@@ -970,7 +977,7 @@ void execute() //execute stage
 
 void registerDump() //prints the data in programmer accessable registers 
 {
-    printf("A:%d|AB:%d|X:%d|Y:%d|Z:%d|F:%d|SP:%d|IX:%d|PC:%d|Ticks:%d|", A, AB, X, Y, Z, F, SP, IX, PC, ticks);
+    printf("A:%d|AB:%d|X:%d|Y:%d|Z:%d|F:%d|SP:%d|IX:%d|IY:%d|PC:%d|Ticks:%d|", A, AB, X, Y, Z, F, SP, IX, IY, PC, ticks);
 }
 
 void output() 
@@ -983,7 +990,6 @@ void output()
             output[i-32000] = memory[i];
             printf("%c", memory[i]);
         }
-        printf("|");
     }
     printf("\r");
 }

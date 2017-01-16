@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <windows.h>
 
 //Register File:
 unsigned char A; //Accumulator 1
@@ -28,3 +29,21 @@ char WM; //1, 2, or 3 byte word mode
 char jmpHld = 0; //jump hold buffer
 
 long ticks;
+
+void hideCursor()
+{
+    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursor;
+    cursor.dwSize = 10;
+    cursor.bVisible = FALSE;
+    SetConsoleCursorInfo(console, &cursor);
+}
+
+void showCursor()
+{
+    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursor;
+    cursor.dwSize = 10;
+    cursor.bVisible = TRUE;
+    SetConsoleCursorInfo(console, &cursor);
+}
