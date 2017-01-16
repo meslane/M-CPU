@@ -165,7 +165,7 @@ void incPC() //increment PC and put info into MDR
 
 void halt() 
 {
-    showCursor();
+	showCursor();
     printf("\n\nCPU Safely halted at PC %d\n", PC);
     getch();
     exit(0);
@@ -980,15 +980,13 @@ void registerDump() //prints the data in programmer accessable registers
     printf("A:%d|AB:%d|X:%d|Y:%d|Z:%d|F:%d|SP:%d|IX:%d|IY:%d|PC:%d|Ticks:%d|", A, AB, X, Y, Z, F, SP, IX, IY, PC, ticks);
 }
 
-void output() 
+void output() //problem here
 {
     int i;
-    unsigned char output[15];
     printf(">>> ");
     if (memory[31999] != 0) {
         for(i = 32000; i < 32016; i++) {
-            output[i-32000] = memory[i];
-            printf("%c", memory[i]);
+			printf("%c", memory[i]);
         }
     }
     printf("\r");
