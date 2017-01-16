@@ -10,6 +10,7 @@ int main(void)
     while (1) {
         run();
         registerDump();
+        output();
     }
 }
 

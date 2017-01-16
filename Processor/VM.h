@@ -6,7 +6,7 @@
 /*
 * 0 - 16383 = EEPROM
 * 16384 - 32767 = RAM
-* 32000 - 32015 = OUTPUT
+* 31999 - 32015 = OUTPUT
 * 32016 - 65535 = UNUSED
 */
 unsigned char memory[65535];
@@ -966,6 +966,26 @@ void execute() //execute stage
             spCheck();
             break;
     }
+}
+
+void registerDump() //prints the data in programmer accessable registers 
+{
+    printf("A:%d|AB:%d|X:%d|Y:%d|Z:%d|F:%d|SP:%d|IX:%d|PC:%d|Ticks:%d|", A, AB, X, Y, Z, F, SP, IX, PC, ticks);
+}
+
+void output() 
+{
+    int i;
+    unsigned char output[15];
+    printf(">>> ");
+    if (memory[31999] != 0) {
+        for(i = 32000; i < 32016; i++) {
+            output[i-32000] = memory[i];
+            printf("%c", memory[i]);
+        }
+        printf("|");
+    }
+    printf("\r");
 }
 
 void run() 
