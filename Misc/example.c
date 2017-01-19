@@ -8,7 +8,7 @@
 #include <glut.h>
 
 GLubyte rasters[24] = {
-   0xc0, 0x00, 0xc0, 0x00, 0xc0, 0x00, 0xc0, 0x00, 0xc0, 0x00,
+   0xc0, 0x00, 0xff, 0xff, 0xc0, 0x00, 0xc0, 0x00, 0xc0, 0x00,
    0xff, 0x00, 0xff, 0x00, 0xc0, 0x00, 0xc0, 0x00, 0xc0, 0x00,
    0xff, 0xc0, 0xff, 0xc0};
 
@@ -21,11 +21,9 @@ void init(void)
 void display(void)
 {
    glClear(GL_COLOR_BUFFER_BIT);
-   glColor3f (1.0, 1.0, 1.0);
+   glColor3f (1.0, 0.592, 0.211); //RBG/255
    glRasterPos2i (20, 20);
-   glBitmap (10, 12, 0.0, 0.0, 11.0, 0.0, rasters);
-   glBitmap (10, 12, 0.0, 0.0, 11.0, 0.0, rasters);
-   glBitmap (10, 12, 0.0, 0.0, 11.0, 0.0, rasters);
+   glBitmap (10, 12, 0.0, 0.0, 11.0, 0.0, rasters); 
    glFlush();
 }
 
@@ -42,7 +40,7 @@ void keyboard(unsigned char key, int x, int y)
 {
    switch (key) {
       case 27:
-         exit(0);
+		 exit(0);
    }
 }
 
