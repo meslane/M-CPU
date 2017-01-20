@@ -48,3 +48,9 @@ void showCursor()
     cursor.bVisible = TRUE;
     SetConsoleCursorInfo(console, &cursor);
 }
+
+
+void registerDump() //prints the data in programmer accessable registers 
+{
+    printf("A:%d|AB:%d|X:%d|Y:%d|Z:%d|F:%d|SP:%d|IX:%d|IY:%d|PC:%d|Ticks:%d|", A, AB, X, Y, Z, F, SP, IX, IY, PC, ticks);
+}

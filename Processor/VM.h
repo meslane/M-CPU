@@ -4,10 +4,9 @@
 #define MIN 0
 
 /*
-* 0 - 16383 = EEPROM
-* 16384 - 32767 = RAM
-* 31999 - 32015 = OUTPUT
-* 32016 - 65535 = UNUSED
+* 0 - 32767 = EEPROM
+* 32768 - 49151 = RAM
+* 50000 - 50001 = OUTPUT
 */
 unsigned char memory[65535];
 unsigned short trap[] = {0x08, 0x10, 0x18, 0x20}; //0 = Bad Address, 1 = Stack Overflow
@@ -113,7 +112,7 @@ void jump(unsigned short address) //Jump PC to given address
 //functions
 void readData(unsigned short address, unsigned char *reg) //new and improve getData with pointer
 { 
-    if (address < 16383) {
+    if (address < 32767) {
         jump(trap[0]);
     }
     else {
@@ -125,7 +124,7 @@ void readData(unsigned short address, unsigned char *reg) //new and improve getD
 
 void writeData(unsigned short address, unsigned char reg) //write byte to address (2 incs)
 {
-    if (address < 16383) {
+    if (address < 32767) {
         jump(trap[0]);
     }
     else {
@@ -148,7 +147,7 @@ unsigned short combine(unsigned char a, unsigned char b) //high, low
 char spCheck() 
 {
     char a;
-    if (SP <= 16384 | SP >= 32016) {
+    if (SP <= 32767 | SP >= 40960) {
         jump(trap[1]);
         a = 1;
     }
@@ -166,7 +165,9 @@ void incPC() //increment PC and put info into MDR
 void halt() 
 {
 	showCursor();
+	printf("\n======================================================\n");
     printf("\n\nCPU Safely halted at PC %d\n", PC);
+	registerDump();
     getch();
     exit(0);
 }
@@ -967,6 +968,10 @@ void execute() //execute stage
             Y = (AH >> 8)&0xff;
             Z = AH&0xff;
             break;
+	//Address clearing
+		case 225: //CLA
+			writeData(AH, 0);
+			break;
     //Set stack
         case 255: //SETSTK
             SP = AH;
@@ -975,22 +980,16 @@ void execute() //execute stage
     }
 }
 
-void registerDump() //prints the data in programmer accessable registers 
-{
-    printf("A:%d|AB:%d|X:%d|Y:%d|Z:%d|F:%d|SP:%d|IX:%d|IY:%d|PC:%d|Ticks:%d|", A, AB, X, Y, Z, F, SP, IX, IY, PC, ticks);
+void output() 
+{	
+	//50000 = enable 
+	int i;	
+    if (memory[50000] != 0 && memory[50001] != 0) {
+		printf("%c", memory[50001]);
+		memory[50001] = 0;
+	}	
 }
 
-void output() //problem here
-{
-    int i;
-    printf(">>> ");
-    if (memory[31999] != 0) {
-        for(i = 32000; i < 32016; i++) {
-			printf("%c", memory[i]);
-        }
-    }
-    printf("\r");
-}
 
 void run() 
 {

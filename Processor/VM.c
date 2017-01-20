@@ -6,11 +6,11 @@ int main(void)
     readMem();
     hideCursor();
     printf("\n\n");
+	printf("======================================================\n");
 
     //execution  
     while (1) {
         run();
-        registerDump();
         output();
     }
 }
