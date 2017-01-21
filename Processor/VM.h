@@ -6,7 +6,7 @@
 /*
 * 0 - 32767 = EEPROM
 * 32768 - 49151 = RAM
-* 50000 - 50001 = OUTPUT
+* 57344 - 57346 = OUTPUT
 */
 unsigned char memory[65535];
 unsigned short trap[] = {0x08, 0x10, 0x18, 0x20}; //0 = Bad Address, 1 = Stack Overflow
@@ -165,7 +165,7 @@ void incPC() //increment PC and put info into MDR
 void halt() 
 {
 	showCursor();
-	printf("\n======================================================\n");
+	printf("\n\n======================================================\n");
     printf("\n\nCPU Safely halted at PC %d\n", PC);
 	registerDump();
     getch();
@@ -982,14 +982,18 @@ void execute() //execute stage
 
 void output() 
 {	
-	//50000 = enable 
+	//58000 = enable
+	//58001 = data
+	//58002 = clear
 	int i;	
-    if (memory[50000] != 0 && memory[50001] != 0) {
-		printf("%c", memory[50001]);
-		memory[50001] = 0;
+    if (memory[58000] != 0 && memory[58001] != 0) {
+		printf("%c", memory[58001]);
+		memory[58001] = 0;
+		if (memory[58002] != 0) {
+			system("CLS");
+		}
 	}	
 }
-
 
 void run() 
 {

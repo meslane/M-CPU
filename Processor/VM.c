@@ -5,8 +5,8 @@ int main(void)
     //pre-execution
     readMem();
     hideCursor();
-    printf("\n\n");
-	printf("======================================================\n");
+	system("CLS");
+	printf("\n");
 
     //execution  
     while (1) {

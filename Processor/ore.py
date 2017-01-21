@@ -24,14 +24,53 @@ while exit == False:
         y = a &0xff
     
         print "High: %s  Low: %s" %(x, y)
+		
+    
+    elif selection == "btod":
+		a = raw_input("Input binary integer: ")
+		print "Decimal form: %s" %(int(a, 2))
+		
+		
+    elif selection == "dtob":
+		a = input("Input decimal integer: ")
+		print "Binary form: %s" %(bin(a)[2:])
+		
+	
+    elif selection == "diceroll":
+		a = random.randint(1, 6)
+		print "Dice rolled %s" %(a)
         
-
+	
     elif selection == "help":
-        print "Commands:"
-        print "or: combine bytes into short"
-        print "deor: split short into bytes"
-        print "exit: close this program"
-        
+		print "Commands:"
+		print "or: combine bytes into short"
+		print "deor: split short into bytes"
+		print "btod: convert binary to decimal"
+		print "dtob: convert decimal to binary"
+		print "diceroll: roll a die"
+		print "exit: close this program"
+		
+    elif selection == "nanoseconds":
+        print (
+"""\nLatency Comparison Numbers
+Light travels 29.9792458 centimeters per ns, or 98.333% of a foot
+Light travels 299.79 meters per us, or 3/4 of the distance around an olympic track 
+Light travels 186.28 miles per ms, or 86 miles above the distance from earth to the Karman line
+--------------------------
+L1 cache reference                           0.5 ns
+Branch mispredict                            5   ns
+L2 cache reference                           7   ns                      14x L1 cache
+Mutex lock/unlock                           25   ns
+Main memory reference                      100   ns                      20x L2 cache, 200x L1 cache
+Compress 1K bytes with Zippy             3,000   ns        3 us
+Send 1K bytes over 1 Gbps network       10,000   ns       10 us
+Read 4K randomly from SSD*             150,000   ns      150 us          ~1GB/sec SSD
+Read 1 MB sequentially from memory     250,000   ns      250 us
+Round trip within same datacenter      500,000   ns      500 us
+Read 1 MB sequentially from SSD*     1,000,000   ns    1,000 us    1 ms  ~1GB/sec SSD, 4X memory
+Disk seek                           10,000,000   ns   10,000 us   10 ms  20x datacenter roundtrip
+Read 1 MB sequentially from disk    20,000,000   ns   20,000 us   20 ms  80x memory, 20X SSD
+Send packet CA->Netherlands->CA    150,000,000   ns  150,000 us  150 ms\n""")
         
     elif selection == "joke":
         joke = random.randint(0, 4)
@@ -48,7 +87,8 @@ while exit == False:
             
      
     elif selection == "linux":
-        print ("""I'd just like to interject for moment. What you're refering to as Linux, is in fact, GNU/Linux, or as I've recently taken to calling it, GNU plus Linux. Linux is not an operating system unto itself, but rather another free component of a fully functioning GNU system made useful by the GNU corelibs, shell utilities and vital system components comprising a full OS as defined by POSIX. Many computer users run a modified version of the GNU system every day, without realizing it. Through a peculiar turn of events, the version of GNU which is widely used today is often called Linux, and many of its users are not aware that it is basically the GNU system, developed by the GNU Project. There really is a Linux, and these people are using it, but it is just a part of the system they use. Linux is the kernel: the program in the system that allocates the machine's resources to the other programs that you run. The kernel is an essential part of an operating system, but useless by itself; it can only function in the context of a complete operating system. Linux is normally used in combination with the GNU operating system: the whole system is basically GNU with Linux added, or GNU/Linux. All the so-called Linux distributions are really distributions of GNU/Linux!""")
+		print "I'd just like to interject for a moment..." 
+
         
     elif selection == "exit":
         exit = True
