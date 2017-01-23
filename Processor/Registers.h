@@ -3,54 +3,45 @@
 #include <conio.h>
 #include <windows.h>
 
-//Register File:
-unsigned char A; //Accumulator 1
-unsigned char AB; //Accumulator 2
-unsigned char *AP; //accumulator pointer (software only)
-unsigned char *BP; //non-accucumulating pointer (software only)
-//general-purpose registers
-unsigned char X; 
-unsigned char Y;
-unsigned char Z;
-unsigned char F; //FLAGs
-unsigned short PC; //Program Counter
-//memory registers
-unsigned char MDR; 
-unsigned short MAR;
-unsigned short SP; //Stack Pointer
-//Index Register
-unsigned short IX;
-unsigned short IY;
-//Control Registers
-unsigned char IR[2]; //Instruction register
-unsigned short AH; //Address Hold
-unsigned char FETCH; //operand hold
-char WM; //1, 2, or 3 byte word mode 
+typedef unsigned short word;
+typedef unsigned char byte;
+enum states {F, T};
 
-char jmpHld = 0; //jump hold buffer
+//CPU memory
+unsigned short memory[65536];
 
-long ticks;
+//data registers
+word A; //accumulators
+word B;
 
-void hideCursor()
-{
-    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_CURSOR_INFO cursor;
-    cursor.dwSize = 10;
-    cursor.bVisible = FALSE;
-    SetConsoleCursorInfo(console, &cursor);
-}
+word X; //general-purpose
+word Y;
+word Z;
 
-void showCursor()
-{
-    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_CURSOR_INFO cursor;
-    cursor.dwSize = 10;
-    cursor.bVisible = TRUE;
-    SetConsoleCursorInfo(console, &cursor);
-}
+//flags 
+struct flag {
+	char O; //overflow
+	char U; //underflow
+	char Z; //zero
+	char P; //parity
+	char I; //interrupt
+};
 
+word IX; //Index registers
+word IY; 
+word SP; //Stack pointer
 
-void registerDump() //prints the data in programmer accessable registers 
-{
-    printf("A:%d|AB:%d|X:%d|Y:%d|Z:%d|F:%d|SP:%d|IX:%d|IY:%d|PC:%d|Ticks:%d|", A, AB, X, Y, Z, F, SP, IX, IY, PC, ticks);
-}
+word PC; //Program Counter
+
+//inaccessible registers
+//instruction fetch registers
+word IR[1]; //two-word instruction register
+
+char wordmode = 1;
+
+byte opcode; //5 bits
+byte r1; //first register/value (3 bits)
+byte r2; //second register/value (3 bits)
+byte subop; //5 bits 
+
+word immediate; //second byte (if present) 

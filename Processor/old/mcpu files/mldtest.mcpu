@@ -1,0 +1,16 @@
+25 SET A (program triggers an interrupt for some reason?)
+128 LD A
+65
+226 SETSTK (49000)
+191 
+104
+205 MST A (61440)
+240
+0
+206 MLD A (61440)
+240
+0
+205 MST A (58001)
+226 error location
+145
+31 HALT

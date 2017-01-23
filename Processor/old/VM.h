@@ -4,9 +4,11 @@
 #define MIN 0
 
 /*
-* 0 - 32767 = EEPROM
-* 32768 - 49151 = RAM
-* 57344 - 57346 = OUTPUT
+* 0 - 32767 = EEPROM (32k)
+* 32768 - 49151 = RAM (16k)
+* 58000 - 58005 = OUTPUT (2bytes)
+* 61440 - 61447 = UNIVERSAL PORTS (8bytes)
+* 65533 - 65534 = STATE SAVE (2bytes)
 */
 unsigned char memory[65535];
 unsigned short trap[] = {0x08, 0x10, 0x18, 0x20}; //0 = Bad Address, 1 = Stack Overflow
@@ -102,18 +104,49 @@ void assignAccumulator(char acc)
     }
 }
 
+void errorHalt(int flag) //stop with error 
+{
+    showCursor();
+    printf("\n\nCPU Unsafely halted at PC %d with error code %d\n", PC, flag);
+    getch();
+    exit(flag);
+}
+
+char spCheck() //make sure SP does not overflow
+{
+    if (SP < 32767 | SP >= 49151) {
+		printf("\n\nBAD STACK");
+		errorHalt(1);
+    }
+}
+
 void jump(unsigned short address) //Jump PC to given address
 {
     PC = address ;
-    MDR = memory[PC];
+    MDR = memory[PC];vxd
     jmpHld = 1;
+}
+
+void trapInt(int line) //traps cannot be masked
+{
+	//save PC state in known memory
+	memory[65533] = (PC >> 8)&0xff; //high
+    memory[65534] = PC&0xff; //low
+	//push FLAGs
+	SP--;
+	memory[SP] = F;
+	spCheck();
+	//set mask bit
+	F = (F|128);
+	//jump to vector
+	jump(trap[line]);
 }
 
 //functions
 void readData(unsigned short address, unsigned char *reg) //new and improve getData with pointer
 { 
     if (address < 32767) {
-        jump(trap[0]);
+        trapInt(0);
     }
     else {
         MAR = address;
@@ -122,10 +155,10 @@ void readData(unsigned short address, unsigned char *reg) //new and improve getD
     }
 } //because this is C after all
 
-void writeData(unsigned short address, unsigned char reg) //write byte to address (2 incs)
+void writeData(unsigned short address, unsigned char reg) //write byte to address (store)
 {
     if (address < 32767) {
-        jump(trap[0]);
+        trapInt(0);
     }
     else {
         MAR = address;
@@ -134,7 +167,7 @@ void writeData(unsigned short address, unsigned char reg) //write byte to addres
     }
 }
 
-unsigned short combine(unsigned char a, unsigned char b) //high, low
+unsigned short combine(unsigned char a, unsigned char b) //combine bytes into short (high, low)
 {
     a = (unsigned short)a << 8;
     (unsigned short)b;
@@ -142,16 +175,6 @@ unsigned short combine(unsigned char a, unsigned char b) //high, low
     unsigned char out;
     out = (a|b);
     return out;
-}
-
-char spCheck() 
-{
-    char a;
-    if (SP <= 32767 | SP >= 40960) {
-        jump(trap[1]);
-        a = 1;
-    }
-    return a;
 }
 
 void incPC() //increment PC and put info into MDR
@@ -162,22 +185,46 @@ void incPC() //increment PC and put info into MDR
     }
 }
 
-void halt() 
+void halt() //stop VM
 {
 	showCursor();
 	printf("\n\n======================================================\n");
-    printf("\n\nCPU Safely halted at PC %d\n", PC);
+    printf("\n\nCPU Safely halted at PC %d\n\n", PC);
 	registerDump();
     getch();
     exit(0);
 }
 
-void errorHalt(int flag) 
+//Interrupt handler 
+void interrupt(int line) //interrput controller 
 {
-    showCursor();
-    printf("\n\nCPU Unsafely halted at PC %d with error code %d\n", PC, flag);
-    getch();
-    exit(flag);
+	if (testBit(F, 7) == 0) { //if interrupt mask is off
+		//save PC state in known memory
+		memory[65533] = (PC >> 8)&0xff; //high
+        memory[65534] = PC&0xff; //low
+		//push FLAGs
+		SP--;
+		memory[SP] = F;
+		//set mask bit
+		F = (F|128);
+		//jump to vector
+		jump(vector[line]);
+	}
+	else if (testBit(F,7) != 0 && FETCH == 0) { //if mask is on but interrput is unmaskable
+		//save PC state in known memory
+		memory[65533] = (PC >> 8)&0xff; //high
+        memory[65534] = PC&0xff; //low
+		//push FLAGs
+		SP--;
+		memory[SP] = F;
+		//set mask bit
+		F = (F|128);
+		//jump to vector
+		jump(vector[line]);
+	}
+	else {
+		return;
+	}
 }
 
 /*
@@ -196,7 +243,7 @@ void fetch() //instruction fetch function
     
     IR[0] = MDR;
     
-    if (IR[0] <= 127) { //get one byte
+    if (IR[0] <= 127 | IR[1] >= 240) { //get one byte
         WM = 1;
         return;
     }
@@ -234,6 +281,8 @@ void decode() //decode stage
 void execute() //execute stage
 {
     char temp;
+	unsigned short ta;
+	unsigned short tb;
     switch (IR[0]) {
     //One-byte operations
         case 0: //NOP
@@ -427,10 +476,7 @@ void execute() //execute stage
     //STACK
         case 58: //PUSH F
             SP--;
-            temp = spCheck();
-            if (temp == 1) {
-                break;
-            }
+            spCheck();
             memory[SP] = F;
             break;
         case 59: //POP F
@@ -439,10 +485,7 @@ void execute() //execute stage
             break;
         case 60: //PUSH X
             SP--;
-            temp = spCheck();
-            if (temp == 1) {
-                break;
-            }
+            spCheck();
             memory[SP] = X;
             break;
         case 61: //POP X
@@ -451,10 +494,7 @@ void execute() //execute stage
             break;
         case 62: //PUSH Y
             SP--;
-            temp = spCheck();
-            if (temp == 1) {
-                break;
-            }
+            spCheck();
             memory[SP] = Y;
             break;
         case 63: //POP Y
@@ -463,10 +503,7 @@ void execute() //execute stage
             break;
         case 64: //PUSH Z
             SP--;
-            temp = spCheck();
-            if (temp == 1) {
-                break;
-            }
+			spCheck();
             memory[SP] = Z;
             break;
         case 65: //POP Z
@@ -665,10 +702,7 @@ void execute() //execute stage
     //STACK ACCUMULATORS
         case 123: //PUSH A
             SP--;
-            temp = spCheck();
-            if (temp == 1) {
-                break;
-            }
+            spCheck();
             memory[SP] = A;
             break;
         case 124: //POP A
@@ -677,10 +711,7 @@ void execute() //execute stage
             break;
         case 125: //PUSH AB
             SP--;
-            temp = spCheck();
-            if (temp == 1) {
-                break;
-            }
+            spCheck();
             memory[SP] = AB;
             break;
         case 126: //POP AB
@@ -727,128 +758,41 @@ void execute() //execute stage
         * 7: 0x40
         */
         case 134: //INT A
-            if (testBit(F, 7) == 0) {
-                jump(vector[0]);
-            } 
-            else if (testBit(F, 7) != 0) {
-                if (FETCH >= 1) { //mask bit accept 
-                    return;
-                }
-                else {
-                    jump(vector[0]);
-                }
-            }
-            break;
-        
+			interrupt(0);
+			break;
         case 135: //INT B
-            if (testBit(F, 7) == 0) {
-                jump(vector[1]);
-            } 
-            else if (testBit(F, 7) != 0) {
-                if (FETCH >= 1) {
-                    return;
-                }
-                else {
-                    jump(vector[1]);
-                }
-            }
+            interrupt(1);
             break;
-        
         case 136: //INT C
-            if (testBit(F, 7) == 0) {
-                jump(vector[2]);
-            } 
-            else if (testBit(F, 7) != 0) {
-                if (FETCH >= 1) {
-                    return;
-                }
-                else {
-                    jump(vector[2]);
-                }
-            }
+			interrupt(2);
             break;
-        
         case 137: //INT D
-            if (testBit(F, 7) == 0) {
-                jump(vector[3]);
-            } 
-            else if (testBit(F, 7) != 0) {
-                if (FETCH >= 1) {
-                    return;
-                }
-                else {
-                    jump(vector[3]);
-                }
-            }
+			interrupt(3);
             break;
-        
         case 138: //INT E
-            if (testBit(F, 7) == 0) {
-                jump(vector[4]);
-            } 
-            else if (testBit(F, 7) != 0) {
-                if (FETCH >= 1) {
-                    return;
-                }
-                else {
-                    jump(vector[4]);
-                }
-            }
+			interrupt(4);
             break;
-        
         case 139: //INT F
-            if (testBit(F, 7) == 0) {
-                jump(vector[5]);
-            } 
-            else if (testBit(F, 7) != 0) {
-                if (FETCH >= 1) {
-                    return;
-                }
-                else {
-                    jump(vector[5]);
-                }
-            }
+			interrupt(5);
             break;
-        
         case 140: //INT G
-            if (testBit(F, 7) == 0) {
-                jump(vector[6]);
-            } 
-            else if (testBit(F, 7) != 0) {
-                if (FETCH >= 1) {
-                    return;
-                }
-                else {
-                    jump(vector[6]);
-                }
-            }
+			interrupt(6);
             break;
-        
         case 141: //INT H
-            if (testBit(F, 7) == 0) {
-                jump(vector[7]);
-            } 
-            else if (testBit(F, 7) != 0) {
-                if (FETCH >= 1) {
-                    return;
-                }
-                else {
-                    jump(vector[7]);
-                }
-            }
+			interrupt(7);
             break;
     //TRAPs 
         case 142: //TRP A
-            jump(trap[0]);
+            trapInt(0);
             break;
         case 143: //TRP B
-            jump(trap[1]);
+            trapInt(1);
             break;
         case 144: //TRP C
-            jump(trap[2]);
+            trapInt(2);
             break;
         case 145: //TRP D
-            jump(trap[3]);
+            trapInt(3);
             break;
     //Three byte instructions
     //AH BRANCHING
@@ -972,34 +916,86 @@ void execute() //execute stage
 		case 225: //CLA
 			writeData(AH, 0);
 			break;
-    //Set stack
-        case 255: //SETSTK
+	//Set stack
+        case 226: //SETSTK
             SP = AH;
             spCheck();
             break;
+	//PC operations
+		//three bytes
+		case 237: //RST PC (restore PC from memory location)
+			ta = memory[65533];
+			tb = memory[65534];
+			PC = combine(ta, tb);
+			break;
+		case 238: //MLD PC LOW (moves lowest byte of PC into memory)
+            writeData(AH, PC&0xff);
+            break;
+        case 239: //MLD PC HIGH (moves highest byte of PC into memory)
+            writeData(AH, (PC >> 8)&0xff);
+            break;
+		//one byte
+		case 240: //IX MLD PC LOW (moves lowest byte of PC into memory)
+            writeData(IX, PC&0xff);
+            break;
+        case 241: //IX MLD PC HIGH (moves highest byte of PC into memory)
+            writeData(IX, (PC >> 8)&0xff);
+            break;
+	    case 242: //IB MLD PC LOW (moves lowest byte of PC into memory)
+            writeData(IX + IY, PC&0xff);
+            break;
+        case 243: //IB MLD PC HIGH (moves highest byte of PC into memory)
+            writeData(IX + IY, (PC >> 8)&0xff);
+            break;
     }
+}
+
+int hardwareInt(int line, int execute)
+{
+	//hardware interrupts cannot override masking 
+	if(execute != 0) {
+		if (testBit(F, 7) == 0) { //if interrupt mask is off
+			//save PC state in known memory
+			memory[65533] = (PC >> 8)&0xff; //high
+			memory[65534] = PC&0xff; //low
+			//push FLAGs
+			SP--;
+			memory[SP] = F;
+			//set mask bit
+			F = (F|128);
+			//jump to vector
+			jump(vector[line]);
+			return 1;
+		}
+	}
+	else {
+		return 0;
+	}
 }
 
 void output() 
 {	
 	//58000 = enable
 	//58001 = data
-	//58002 = clear
+	//58005 = clear
 	int i;	
     if (memory[58000] != 0 && memory[58001] != 0) {
 		printf("%c", memory[58001]);
 		memory[58001] = 0;
-		if (memory[58002] != 0) {
+		if (memory[58005] != 0) {
 			system("CLS");
 		}
-	}	
+	}
+	else {
+		return;
+	}
 }
 
 void run() 
 {
-    fetch();
+	fetch();
     decode();
-    execute();
+	execute();
     incPC();
     jmpHld = 0;
     ticks++;

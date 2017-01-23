@@ -39,7 +39,51 @@ while exit == False:
     elif selection == "diceroll":
 		a = random.randint(1, 6)
 		print "Dice rolled %s" %(a)
-        
+		
+    elif selection == "rps":
+		a = raw_input("Rock Paper or Scissors? r/p/s: ")
+		b = random.randint(1, 3)
+		if b == 1:
+			c = "rock"
+		elif b == 2:
+			c = "paper"
+		elif b == 3:
+			c = "scissors"
+		
+		if a == "r":
+			if c =="rock":
+				state = "tie"
+				print "AI chose rock, you %s" %(state)
+			elif c == "paper":
+				state = "lose"
+				print "AI chose paper, you %s" %(state)
+			elif c == "scissors":
+				state = "win"
+				print "AI chose scissors, you %s" %(state)
+		elif a == "p":
+			if c =="rock":
+				state = "win"
+				print "AI chose rock, you %s" %(state)
+			elif c == "paper":
+				state = "tie"
+				print "AI chose paper, you %s" %(state)
+			elif c == "scissors":
+				state = "lose"
+				print "AI chose scissors, you %s" %(state)
+		elif a == "s":
+			if c =="rock":
+				state = "lose"
+				print "AI chose rock, you %s" %(state)
+			elif c == "paper":
+				state = "win"
+				print "AI chose paper, you %s" %(state)
+			elif c == "scissors":
+				state = "tie"
+				print "AI chose scissors, you %s" %(state)
+		elif a == "dynamite" or a == "d":
+			print "Well aren't you clever?"
+		else:
+			print "AI chose %s but you didn't choose anything, so it won by forfeit"  %(c)
 	
     elif selection == "help":
 		print "Commands:"
@@ -48,6 +92,7 @@ while exit == False:
 		print "btod: convert binary to decimal"
 		print "dtob: convert decimal to binary"
 		print "diceroll: roll a die"
+		print "rps: play rock paper scissors"
 		print "exit: close this program"
 		
     elif selection == "nanoseconds":
