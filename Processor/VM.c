@@ -1,4 +1,4 @@
-#include "Registers.h"
+#include "VMFuncts.h"
 
 
 void fetch(void)
@@ -25,7 +25,25 @@ void decode(void)
 
 void execute(void)
 {
-
+	switch (opcode) {
+		case 0: //NOP
+			return;
+			break;
+		case 1: //LDO (load operand)
+			loadReg(r1);
+			break;
+		case 2: //LDA (load data at address to register)
+			loadA(r1);
+			break;
+		case 3: //STA (store data in register at address)
+			storeA(r1);
+			break;
+		case 4: //GOTO (jump to given immediate value)
+			jump(IR[1]);
+			break;
+		case 5: //JUMPIF 
+			break;
+	}
 }
 
 void run(void)
@@ -35,7 +53,7 @@ void run(void)
 	execute();	
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
 	run();
 	printf("%i,%i,%i,%i,%i\n", opcode, r1, r2, subop, immediate);

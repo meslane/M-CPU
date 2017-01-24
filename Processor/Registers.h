@@ -11,12 +11,17 @@ enum states {F, T};
 unsigned short memory[65536];
 
 //data registers
-word A; //accumulators
-word B;
-
-word X; //general-purpose
-word Y;
-word Z;
+word registers[8];
+/*
+* [0] = A Accumulators
+* [1] = B
+* [2] = X General-purpose
+* [3] = Y
+* [4] = Z
+* [5] = IX Index registers
+* [6] = IY
+* [7] = SP Stack pointer
+*/
 
 //flags 
 struct flag {
@@ -26,10 +31,6 @@ struct flag {
 	char P; //parity
 	char I; //interrupt
 };
-
-word IX; //Index registers
-word IY; 
-word SP; //Stack pointer
 
 word PC; //Program Counter
 
