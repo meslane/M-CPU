@@ -12,34 +12,34 @@ void fetch(void)
 
 void decode(void)
 {
-	opcode = (IR[0] >> 11)&0x1f; //highest 5 bits
-	r1 = (IR[0] >> 8)&0x07; //next 3 bits
-	r2 = (IR[0] >> 5)&0x07; //next 3 bits
-	subop = IR[0]&0x1f; //last 5 bits
+	wordSeg.opcode = (IR[0] >> 11)&0x1f; //highest 5 bits
+	wordSeg.r1 = (IR[0] >> 8)&0x07; //next 3 bits
+	wordSeg.r2 = (IR[0] >> 5)&0x07; //next 3 bits
+	wordSeg.subop = IR[0]&0x1f; //last 5 bits
 	
 	if (wordmode == 2) { //if two-word instruction
-		immediate = IR[1];
+		wordSeg.immediate = IR[1];
 		wordmode = 1; //reset for next instruction 
 	}
 }
 
 void execute(void)
 {
-	switch (opcode) {
+	switch (wordSeg.opcode) {
 		case 0: //NOP
 			return;
 			break;
 		case 1: //LDO (load operand)
-			loadReg(r1);
+			loadReg(wordSeg.r1);
 			break;
 		case 2: //LDA (load data at address to register)
-			loadA(r1);
+			loadA(wordSeg.r1);
 			break;
 		case 3: //STA (store data in register at address)
-			storeA(r1);
+			storeA(wordSeg.r1);
 			break;
 		case 4: //GOTO (jump to given immediate value)
-			jump(IR[1]);
+			jump(wordSeg.immediate);
 			break;
 		case 5: //JUMPIF 
 			break;
@@ -56,5 +56,5 @@ void run(void)
 int main(int argc, char *argv[])
 {
 	run();
-	printf("%i,%i,%i,%i,%i\n", opcode, r1, r2, subop, immediate);
+	printf("%i,%i,%i,%i,%i\n", wordSeg.opcode, wordSeg.r1, wordSeg.r2, wordSeg.subop, wordSeg.immediate);
 }

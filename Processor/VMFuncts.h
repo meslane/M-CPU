@@ -31,7 +31,7 @@ word jump(word address)
 	PC = address; //jump to address
 }
 
-word jumpif(word address, byte mode, struct flag flags) //mode = subop, address = IR[1]
+word jumpif(word address, byte mode, flag flagFN) //mode = subop, address = IR[1]
 {
 	//mode designates what branch if to execute 
 	//address designates address to jump to if branch is not rejected 
