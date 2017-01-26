@@ -32,6 +32,7 @@ void execute(void)
 		case 0: //NOP
 			return;
 			break;
+		//double-word opcodes
 		case 1: //LDO (load operand)
 			loadReg(wordSeg.r1, wordSeg.immediate);
 			break;
@@ -41,25 +42,26 @@ void execute(void)
 		case 3: //STA (store data in register at address)
 			storeA(wordSeg.r1, wordSeg.immediate);
 			break;
-		case 4: //LDA R (load data at address pointed to by second register to first register)
-			loadA(wordSeg.r1, wordSeg.r2);
-			break;
-		case 5: //STA R (store data in first register at address pointed to by second register)
-			storeA(wordSeg.r1, wordSeg.r2);
-			break;
-		case 8: //GOTO (jump to given immediate value)
+		case 4: //GOTO (jump to given immediate value)
 			jump(wordSeg.immediate);
 			break;
-		case 9: //GOTO R (jump to address in r2)
-			jump(wordSeg.r2);
-			break;
-		case 11: //JMP (jump to immediate value if condition designated by subop is met)
+		case 5: //JMP (jump to immediate value if condition designated by subop is met)
 			jumpif(wordSeg.immediate, wordSeg.subop, flags);
 			break;
-		case 12: //JMP R (jump to address specified by r2 if condition designated by subop is met)
+		//single-word opcodes
+		case 6: //GOTO R (jump to address in r2)
+			jump(wordSeg.r2);
+			break;
+		case 7: //LDA R (load data at address pointed to by second register to first register)
+			loadA(wordSeg.r1, wordSeg.r2);
+			break;
+		case 8: //STA R (store data in first register at address pointed to by second register)
+			storeA(wordSeg.r1, wordSeg.r2);
+			break;
+		case 9: //JMP R (jump to address specified by r2 if condition designated by subop is met)
 			jumpif(wordSeg.r2, wordSeg.subop, flags);
 			break;
-		case 13: //MOV (move r1 to r2)
+		case 10: //MOV (move r1 to r2)
 			move(wordSeg.r1, wordSeg.r2);
 			break;
 	}
