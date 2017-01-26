@@ -10,6 +10,7 @@ typedef unsigned char byte;
 
 enum states {F, T};
 enum operations {NONE, ADD, SUB, AND, OR, XOR, LSHIFT, RSHIFT};
+enum registers {A, B, C, D, E, X, Y, SP};
 
 //CPU memory
 unsigned short memory[65536];
@@ -17,13 +18,13 @@ unsigned short memory[65536];
 //data registers
 word registers[8]; //all programmer-accessible registers except PC
 /*
-* [0] = A Accumulators
+* [0] = A General-purpose
 * [1] = B
-* [2] = X General-purpose
-* [3] = Y
-* [4] = Z
-* [5] = IX Index registers
-* [6] = IY
+* [2] = C 
+* [3] = D
+* [4] = E
+* [5] = X General-purpose, but used ideally used for indexing 
+* [6] = Y
 * [7] = SP Stack pointer
 */
 
@@ -56,5 +57,3 @@ typedef struct {
 wordSegment wordSeg;
 
 word IR[1]; //two-word instruction register
-
-char wordmode = 1;
