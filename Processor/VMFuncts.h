@@ -171,6 +171,7 @@ word ALU(byte r1, byte r2, byte r3, char operation) //r3 = subop
 			result = registers[r1] - (registers[r2] + flags.C);
 			break;
 	}
+	
 	if (result > 65535 || (operation == SUB && registers[r1] < registers[r2])) {
 		flags.C = 1; //set carry flag if number is too big for 16 bits or if operation is SUB and A<B
 	}
