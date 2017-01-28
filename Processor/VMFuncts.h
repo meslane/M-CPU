@@ -1,77 +1,119 @@
 #include "Registers.h"
 
+word jump(word address) 
+{
+	PC = address;
+	return PC;
+}
+
 void loadReg(byte rval, word address) //load register selected by r1 or r2 with immediate 
 {
 	registers[rval] = address; //set designated register equal to value
 }
 
-void loadA(byte rval, word address) //load register with data stored at immediate address
+void loadA(byte r1, byte r2, byte subop, word immediate) //load register with data stored at immediate address
 {
-	word data;
-	
-	data = memory[address]; //get data at specified address
-	
-	registers[rval] = data; //set register equal to data at given address
+	switch(subop) {
+		case 0:
+			registers[r1] = memory[immediate]; //set r1 equal to data at immediate address
+			break;
+		case 1: 
+			registers[r1] = memory[r2]; //set r1 equal to data at address in r2
+			break;
+		case 2:
+			registers[r1] = memory[r2 + immediate]; //set r1 equal to data at address in r2 + immediate
+			break;
+	}
 }
 
-void storeA(byte rval, word address) //store data in register at immediate address
+void storeA(byte r1, byte r2, byte subop, word immediate) //store data in register at immediate address
 {
-	memory[address] = registers[rval]; //write data in designated register to address
+	switch(subop) {
+		case 0:
+			memory[immediate] = registers[r1]; //set memory address at immediate equal to r1's data
+			break;
+		case 1: 
+			memory[r2] = registers[r1]; //set memory address at r2 equal to r1's data
+			break;
+		case 2:
+			memory[r2 + immediate] = registers[r1]; //set memory address at r2 + immediate equal to r1's data
+			break;
+	}
 }
 
-word jump(word address) 
+void gotoA(byte r2, byte subop, word immediate) 
 {
-	PC = address; //jump to address
-	return PC;
+	switch(subop) {
+		case 0:
+			jump(immediate);
+			break;
+		case 1:
+			jump(r2);
+			break;
+		case 2:
+			jump(r2 + immediate);
+			break;
+	}
 }
 
-void jumpif(word address, byte mode, flag flags) //mode = subop, address = IR[1]
+void jumpif(word immediate, flag flags, char condition) //mode = subop, address = IR[1]
 {
 	//mode designates what branch if to execute 
 	//address designates address to jump to if branch is not rejected 
 	//flags are read to find condition
-	switch (mode) {
-		case 0: //Jump if overflow
-			if (flags.O != 0) {
-				jump(address);
+	switch (condition) {
+		case 0: //Jump if carry
+			if (flags.C != 0) {
+				jump(immediate);
 			}
 			break;
-		case 1: // Jump if not overflow
-			if (flags.O == 0) {
-				jump(address);
+		case 1: // Jump if not carry
+			if (flags.C == 0) {
+				jump(immediate);
 			}
 			break;
-		case 2: //Jump if underflow
-			if (flags.U != 0) {
-				jump(address);
+		case 2: //Jump if negative
+			if (flags.N != 0) {
+				jump(immediate);
 			}
 			break;
-		case 3: //Jump if not underflow
-			if (flags.U == 0) {
-				jump(address);
+		case 3: //Jump if not negative
+			if (flags.N == 0) {
+				jump(immediate);
 			}
 			break;
 		case 4: //Jump if zero
 			if (flags.Z != 0) {
-				jump(address);
+				jump(immediate);
 			}
 			break;
 		case 5: //Jump if not zero
 			if (flags.Z == 0) {
-				jump(address);
+				jump(immediate);
 			}
 			break;
 		case 6: //Jump if parity 
 			if (flags.P != 0) {
-				jump(address);
+				jump(immediate);
 			}
 			break;
 		case 7: //Jump if not parity
 			if (flags.P == 0) {
-				jump(address);
+				jump(immediate);
 			}
 			break;
 	}
+}
+
+void gotoSubroutine(word immediate)
+{
+	RETURN = PC; //store current PC state
+	jump(immediate); //goto subroutine
+}
+
+void returnFromSubroutine(void)
+{
+	PC = RETURN; //restore return address to PC
 }
 
 void move(byte src, byte dest) //MOV (move r1 to r2)
@@ -79,3 +121,72 @@ void move(byte src, byte dest) //MOV (move r1 to r2)
 	registers[dest] = registers[src];
 }
 
+void push(byte r1) 
+{
+	if (r1 == 7) { //cannot write SP to stack
+		exit(0);
+	}
+	registers[7]--; //increase stack size to make room for new entry
+	memory[registers[7]] = registers[r1]; //set memory at SP location to value in given register
+}
+
+void pop(byte r1)
+{
+	if (r1 == 7) { //cannot pop into stack
+		exit(0);
+	}
+	registers[r1] = memory[registers[7]]; //pop top stack entry into given register
+	registers[7]++; //decrease stack size to remove now-vacant entry
+}
+
+word ALU(byte r1, byte r2, byte r3, char operation) //r3 = subop
+{
+	int result;
+	switch (operation) {
+		case ADD: 
+			result = registers[r1] + registers[r2];
+			break;
+		case SUB: 
+			result = registers[r1] - registers[r2];
+			break;
+		case AND:
+			result = registers[r1] & registers[r2];
+			break;
+		case OR:
+			result = registers[r1] | registers[r2];
+			break;
+		case XOR: 
+			result = registers[r1] ^ registers[r2];
+			break;
+		case LSHIFT:
+			result = registers[r1] << 1;
+			break;
+		case RSHIFT:
+			result = registers[r1] >> 1;
+			break;
+		case ADC: //add with carry 
+			result = registers[r1] + registers[r2] + flags.C;
+			break;
+		case SBB: //subtract with borrow
+			result = registers[r1] - (registers[r2] + flags.C);
+			break;
+	}
+	if (result > 65535 || (operation == SUB && registers[r1] < registers[r2])) {
+		flags.C = 1; //set carry flag if number is too big for 16 bits or if operation is SUB and A<B
+	}
+	if (result < 0) {
+		flags.N = 1; //set negative flag if number is too small for 16 bits
+	}
+	if (result == 0) {
+		flags.Z = 1; //set zero flag if number is zero
+	}
+	if (result%2 == 1) {
+		flags.P = 1; //set parity flag if number is odd
+	}
+	
+	if (r3 < 8) { //if r3 is a register value
+		registers[r3] = (word)result; //cast to unsigned short and put in dest register
+	}
+	
+	return (word)result; //cast to unsigned short and return 
+}
