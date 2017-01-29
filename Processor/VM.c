@@ -61,22 +61,22 @@ void execute(void)
 		case 6: //JMPIF NC (jump if not carry)
 			jumpif(wordSeg.immediate, flags, 1);
 			break;
-		case 7: //JMPIF N
+		case 7: //JMPIF N (jump if negative)
 			jumpif(wordSeg.immediate, flags, 2);
 			break;
-		case 8: //JMPIF NN
+		case 8: //JMPIF NN (jump if not negative)
 			jumpif(wordSeg.immediate, flags, 3);
 			break;
-		case 9: //JMPIF Z
+		case 9: //JMPIF Z (jump if zero)
 			jumpif(wordSeg.immediate, flags, 4);
 			break;
-		case 10: //JMPIF NZ
+		case 10: //JMPIF NZ (jump if not zero)
 			jumpif(wordSeg.immediate, flags, 5);
 			break;
-		case 11: //JMPIF P
+		case 11: //JMPIF P (jump if parity)
 			jumpif(wordSeg.immediate, flags, 6);
 			break;
-		case 12: //JMPIF NP
+		case 12: //JMPIF NP (jump if not parity)
 			jumpif(wordSeg.immediate, flags, 7);
 			break;
 		case 13: //GSR (goto to immediate value and store PC state in RETURN register)
@@ -95,7 +95,7 @@ void execute(void)
 		case 17: //POP (pop topmost stack value into register)
 			pop(wordSeg.r1);
 			break;
-		//TODO: add ALU operations 
+		//TODO: add ALU operations and put add with carry and sub with borrow in same instruction
 	}
 }
 
