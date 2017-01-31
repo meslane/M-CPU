@@ -56,3 +56,5 @@ flag flags;
 word RETURN; //Return address for subroutine calls
 
 word IR[1]; //two-word instruction register
+
+char halt;

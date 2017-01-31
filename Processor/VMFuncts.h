@@ -207,9 +207,3 @@ word ALU(byte r1, byte r2, byte r3, char operation) //r3 = subop
     
     return (word)result; //cast to unsigned short and return 
 }
-
-void halt() 
-{
-    printf("VM safely halted at PC %i\n", PC);
-    exit(0);
-}

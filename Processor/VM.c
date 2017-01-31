@@ -3,12 +3,21 @@
 #define MAX 65535
 #define MIN 0
 
+void insert()
+{
+    memory[0] = 2048; //2+2
+    memory[1] = 2;
+    memory[2] = 32800;
+    memory[3] = 38945;
+    memory[4] = 63488;
+}
+
 char fetch(void)
 {
     char WM; //one or two byte wordmode
     IR[0] = memory[PC++]; //get word at PC location
     char op = ((IR[0] >> 11)&0x1f);
-    if ((op >= 0) && (op <= 13) && (IR[0]&0x1f != 1)) { //if opcode designates a two-word instruction and subop value is not 1
+    if (op <= 13) { //if opcode designates a two-word instruction and subop value is not 1
         WM = 2; //tell decoder to store IR[1] in immediate
         IR[1] = memory[PC++];
     }
@@ -129,7 +138,7 @@ void execute(void)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, RSHIFT);
             break;
         case 31: //HALT
-            halt();
+            halt = 1;
             break;
         
     }
@@ -145,6 +154,12 @@ void run(void)
 
 int main(int argc, char *argv[])
 {
-    run();
-    printf("%i,%i,%i,%i,%i\n", wordSeg.opcode, wordSeg.r1, wordSeg.r2, wordSeg.subop, wordSeg.immediate);
+    insert();
+    while(halt == 0) {
+        printf("%i, %i, %i, %i\n", wordSeg.opcode, wordSeg.r1, wordSeg.r2, wordSeg.subop);
+        run();
+    }
+    printf("VM safely halted at PC %i\n", PC);
+    printf("A:%i B:%i C:%i D:%i E:%i X:%i Y:%i AP:%i\n",registers[0],registers[1],registers[2],registers[3],registers[4],registers[5],registers[6],registers[7]);
+    exit(0);
 }
