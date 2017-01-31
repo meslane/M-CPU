@@ -32,21 +32,21 @@ word PC; //Program Counter
 
 //flags 
 typedef struct {
-	char C; //carry
-	char N; //negative
-	char Z; //zero
-	char P; //parity
-	char I; //interrupt
+    char C; //carry
+    char N; //negative
+    char Z; //zero
+    char P; //parity
+    char I; //interrupt
 } flag;
 
 //inaccessible registers
 //instruction fetch registers
 typedef struct {
-	byte opcode; //5 bits
-	byte r1; //first register/value (3 bits)
-	byte r2; //second register/value (3 bits)
-	byte subop; //5 bits 
-	word immediate; //second byte (if present) 
+    byte opcode; //5 bits
+    byte r1; //first register/value (3 bits)
+    byte r2; //second register/value (3 bits)
+    byte subop; //5 bits 
+    word immediate; //second byte (if present) 
 } wordSegment; 
 
 //initalize wordSegments and flags 
