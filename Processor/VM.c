@@ -5,37 +5,23 @@
 
 void insert()
 {
-    memory[0] = 2048; //2+2
-    memory[1] = 2;
-    memory[2] = 32800;
-    memory[3] = 38945;
-    memory[4] = 63488;
+    memory[0] = 0xf8000000;
 }
 
-char fetch(void)
+void fetch(void)
 {
-    char WM; //one or two byte wordmode
-    IR[0] = memory[PC++]; //get word at PC location
-    char op = ((IR[0] >> 11)&0x1f);
-    if (op <= 13) { //if opcode designates a two-word instruction and subop value is not 1
-        WM = 2; //tell decoder to store IR[1] in immediate
-        IR[1] = memory[PC++];
-    }
-    return WM;
+    IR = memory[PC++]; //get word at PC location
 }
 
-void decode(char WM)
+void decode()
 {
-    wordSeg.opcode = (IR[0] >> 11)&0x1f; //highest 5 bits
-    wordSeg.r1 = (IR[0] >> 8)&0x07; //next 3 bits (src register usually)
-    wordSeg.r2 = (IR[0] >> 5)&0x07; //next 3 bits (dest register usually)
-    wordSeg.subop = IR[0]&0x1f; //last 5 bits
+    wordSeg.opcode = (IR >> 27)&0x1f; //highest 5 bits
+    wordSeg.r1 = (IR >> 24)&0x07; //next 3 bits (src register usually)
+    wordSeg.r2 = (IR >> 21)&0x07; //next 3 bits (dest register usually)
+    wordSeg.subop = (IR >> 16)&0x1f; //next 5 bits
+    wordSeg.immediate = IR&0xffff;
     
     testInstruction(wordSeg.opcode, wordSeg.r1, wordSeg.r2, wordSeg.subop); 
-    
-    if (WM == 2) { //if two-word instruction
-        wordSeg.immediate = IR[1];
-    }
 }
 
 void execute(void)
@@ -44,7 +30,6 @@ void execute(void)
         case 0: //NOP (no operation
             return;
             break;
-        //double-word opcodes
         /* Addressing operation format:  
         *  [opcode] [r1 (register to load or store to/from RAM)]
         *  [r2 (register to use if mode == 2 or 3)] [subop (mode)]
@@ -93,7 +78,6 @@ void execute(void)
         case 13: //GSR (goto to immediate value and store PC state in RETURN register)
             gotoSubroutine(wordSeg.immediate);
             break;
-        //single-word opcodes
         case 14: //RSR (return from subroutine, restore PC from RETURN)
             returnFromSubroutine();
             break;
@@ -140,15 +124,13 @@ void execute(void)
         case 31: //HALT
             halt = 1;
             break;
-        
     }
 }
 
 void run(void)
 {
-    char wordmode = 1; //single or double word mode
-    wordmode = fetch(); //get instruction word(s) and set wordmode for decode();
-    decode(wordmode); //decode words(s) given perameter from fetch();
+    fetch(); 
+    decode();
     execute();     
 }
 
@@ -156,7 +138,7 @@ int main(int argc, char *argv[])
 {
     insert();
     while(halt == 0) {
-        printf("%i, %i, %i, %i\n", wordSeg.opcode, wordSeg.r1, wordSeg.r2, wordSeg.subop);
+        printf("%i, %i, %i, %i, %i\n", wordSeg.opcode, wordSeg.r1, wordSeg.r2, wordSeg.subop, wordSeg.immediate);
         run();
     }
     printf("VM safely halted at PC %i\n", PC);

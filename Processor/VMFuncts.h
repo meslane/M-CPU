@@ -1,18 +1,18 @@
 #include "Registers.h"
 #include "VMerror.h"
 
-word jump(word address) 
+word jump(halfword address) 
 {
     PC = address;
     return PC;
 }
 
-void loadReg(byte rval, word address) //load register selected by r1 or r2 with immediate 
+void loadReg(byte rval, halfword address) //load register selected by r1 or r2 with immediate 
 {
     registers[rval] = address; //set designated register equal to value
 }
 
-void loadA(byte r1, byte r2, byte subop, word immediate) //load register with data stored at immediate address
+void loadA(byte r1, byte r2, byte subop, halfword immediate) //load register with data stored at immediate address
 {
     switch(subop) {
         case 0:
@@ -27,7 +27,7 @@ void loadA(byte r1, byte r2, byte subop, word immediate) //load register with da
     }
 }
 
-void storeA(byte r1, byte r2, byte subop, word immediate) //store data in register at immediate address
+void storeA(byte r1, byte r2, byte subop, halfword immediate) //store data in register at immediate address
 {
     switch(subop) {
         case 0:
@@ -42,7 +42,7 @@ void storeA(byte r1, byte r2, byte subop, word immediate) //store data in regist
     }
 }
 
-void gotoA(byte r2, byte subop, word immediate) 
+void gotoA(byte r2, byte subop, halfword immediate) 
 {
     switch(subop) {
         case 0:
@@ -57,7 +57,7 @@ void gotoA(byte r2, byte subop, word immediate)
     }
 }
 
-void jumpif(word immediate, flag flags, char condition) //mode = subop, address = IR[1]
+void jumpif(halfword immediate, flag flags, char condition) //mode = subop, address = IR[1]
 {
     //mode designates what branch if to execute 
     //address designates address to jump to if branch is not rejected 
@@ -106,7 +106,7 @@ void jumpif(word immediate, flag flags, char condition) //mode = subop, address 
     }
 }
 
-void gotoSubroutine(word immediate)
+void gotoSubroutine(halfword immediate)
 {
     RETURN = PC; //store current PC state
     jump(immediate); //goto subroutine
@@ -205,5 +205,5 @@ word ALU(byte r1, byte r2, byte r3, char operation) //r3 = subop
         error(2);
     }
     
-    return (word)result; //cast to unsigned short and return 
+    return (halfword)result; //cast to unsigned short and return 
 }
