@@ -18,7 +18,7 @@ unsigned char error(unsigned char errnum)
             exit(1);
             break;
         case 3: //store into ROM
-            printf("ERROR FATAL: attempt to write into ROM space\n");
+            printf("ERROR FATAL: attempt to write into ROM segment\n");
             exit(1);
             break;
         case 4: //push SP onto stack
@@ -29,12 +29,9 @@ unsigned char error(unsigned char errnum)
             printf("ERROR FATAL: cannot pop stack value into SP\n");
             exit(1);
             break;
+        case 6: //segment out of range 
+            printf("ERROR FATAL: nonexistent segment\n");
+            exit(1);
     }
     return errnum;
-}
-
-void testInstruction(char opcode, char r1, char r2, char subop) {
-    if (r1 >= 8 || r2 >= 8) {
-        error(2);
-    }
 }

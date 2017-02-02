@@ -7,22 +7,22 @@ word jump(halfword address)
     return PC;
 }
 
-void loadReg(byte rval, halfword address) //load register selected by r1 or r2 with immediate 
+void loadReg(byte rval, halfword immediate) //load register with immediate 
 {
-    registers[rval] = address; //set designated register equal to value
+    registers[rval] = immediate; //set designated register equal to value
 }
 
 void loadA(byte r1, byte r2, byte subop, halfword immediate) //load register with data stored at immediate address
 {
     switch(subop) {
         case 0:
-            registers[r1] = memory[immediate]; //set r1 equal to data at immediate address
+            registers[r1] = memory[segment.MS][immediate]; //set r1 equal to data at immediate address
             break;
         case 1: 
-            registers[r1] = memory[r2]; //set r1 equal to data at address in r2
+            registers[r1] = memory[segment.MS][r2]; //set r1 equal to data at address in r2
             break;
         case 2:
-            registers[r1] = memory[r2 + immediate]; //set r1 equal to data at address in r2 + immediate
+            registers[r1] = memory[segment.MS][r2 + immediate]; //set r1 equal to data at address in r2 + immediate
             break;
     }
 }
@@ -31,13 +31,13 @@ void storeA(byte r1, byte r2, byte subop, halfword immediate) //store data in re
 {
     switch(subop) {
         case 0:
-            memory[immediate] = registers[r1]; //set memory address at immediate equal to r1's data
+            memory[segment.MS][immediate] = registers[r1]; //set memory address at immediate equal to r1's data
             break;
         case 1: 
-            memory[r2] = registers[r1]; //set memory address at r2 equal to r1's data
+            memory[segment.MS][r2] = registers[r1]; //set memory address at r2 equal to r1's data
             break;
         case 2:
-            memory[r2 + immediate] = registers[r1]; //set memory address at r2 + immediate equal to r1's data
+            memory[segment.MS][r2 + immediate] = registers[r1]; //set memory address at r2 + immediate equal to r1's data
             break;
     }
 }
@@ -136,20 +136,14 @@ void interrupt(byte line)
 
 void push(byte r1) 
 {
-    if (r1 == 7) { //cannot write SP to stack
-        error(4);
-    }
-    registers[7]--; //increase stack size to make room for new entry
-    memory[registers[7]] = registers[r1]; //set memory at SP location to value in given register
+    SP--; //increase stack size to make room for new entry
+    memory[segment.SS][SP] = registers[r1]; //set memory at SP location to value in given register
 }
 
 void pop(byte r1)
 {
-    if (r1 == 7) { //cannot pop into stack
-        error(5);
-    }
-    registers[r1] = memory[registers[7]]; //pop top stack entry into given register
-    registers[7]++; //decrease stack size to remove now-vacant entry
+    registers[r1] = memory[segment.SS][SP]; //pop top stack entry into given register
+    SP++; //decrease stack size to remove now-vacant entry
 }
 
 word ALU(byte r1, byte r2, byte r3, char operation) //r3 = subop
@@ -206,4 +200,28 @@ word ALU(byte r1, byte r2, byte r3, char operation) //r3 = subop
     }
     
     return (halfword)result; //cast to unsigned short and return 
+}
+
+void ldSegment(byte subop, halfword immediate)
+{
+    if (immediate > 15) {
+        error(6);
+    }
+    
+    switch(subop) {
+        case 0:
+            segment.RS = immediate;
+            break;
+        case 1:
+            segment.MS = immediate;
+            break;
+        case 2:
+            segment.SS = immediate;
+            break;
+    }
+}
+
+void loadSp(halfword immediate)
+{
+    SP = immediate;
 }

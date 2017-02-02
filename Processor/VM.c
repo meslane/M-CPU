@@ -5,12 +5,12 @@
 
 void insert()
 {
-    memory[0] = 0xf8000000;
+    memory[0][0] = 0xf8000000;
 }
 
 void fetch(void)
 {
-    IR = memory[PC++]; //get word at PC location
+    IR = memory[segment.RS][PC++]; //get word at PC location
 }
 
 void decode()
@@ -20,8 +20,6 @@ void decode()
     wordSeg.r2 = (IR >> 21)&0x07; //next 3 bits (dest register usually)
     wordSeg.subop = (IR >> 16)&0x1f; //next 5 bits
     wordSeg.immediate = IR&0xffff;
-    
-    testInstruction(wordSeg.opcode, wordSeg.r1, wordSeg.r2, wordSeg.subop); 
 }
 
 void execute(void)
@@ -121,7 +119,13 @@ void execute(void)
         case 27: //RSHIFT
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, RSHIFT);
             break;
-        case 31: //HALT
+        case 28: //LSG (switch memory segment by loading memory segment register)
+            ldSegment(wordSeg.subop, wordSeg.immediate);
+            break;
+        case 29: //LSP (set stack by loading stack pointer)
+            loadSp(wordSeg.immediate);
+            break;
+        case 31: //HALT (halt CPU)
             halt = 1;
             break;
     }
@@ -134,8 +138,17 @@ void run(void)
     execute();     
 }
 
+void prexec(void)
+{
+    //set segment pointers to start values
+    segment.RS = 0;
+    segment.MS = 8;
+    segment.SS = 15;
+}
+
 int main(int argc, char *argv[])
 {
+    prexec();
     insert();
     while(halt == 0) {
         printf("%i, %i, %i, %i, %i\n", wordSeg.opcode, wordSeg.r1, wordSeg.r2, wordSeg.subop, wordSeg.immediate);
