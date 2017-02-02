@@ -92,38 +92,40 @@ void execute(void)
             pop(wordSeg.r1);
             break;
         //ALU operations
-        case 19: //ADD
+        case 19: //ADD (Add r1 to r2 and store in r3)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, ADD);
             break;
         case 20: //ADC (Add with carry)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, ADC);
             break;
-        case 21: //SUB
+        case 21: //SUB (Subtract r2 from r1 and store in r3)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, SUB);
             break;
         case 22: //SBB (Sub wtih borrow)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, SBB);
             break;
-        case 23: //AND
+        case 23: //AND (And r1 and r2 and store in r3)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, AND);
             break;
-        case 24: //OR
+        case 24: //OR (Or r1 and r2 and store in r3)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, OR);
             break;
-        case 25: //XOR
+        case 25: //XOR (Xor r1 and r2 and store in r3)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, XOR);
             break;
-        case 26: //LSHIFT
+        case 26: //LSHIFT (Leftshift r1 by one bit and store in r3)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, LSHIFT);
             break;
-        case 27: //RSHIFT
+        case 27: //RSHIFT (Rightshift r1 by one bit and store in r3)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, RSHIFT);
             break;
-        case 28: //LSG (switch memory segment by loading memory segment register)
+        case 28: //LSG (switch memory segment by loading memory segment pointers)
             ldSegment(wordSeg.subop, wordSeg.immediate);
             break;
         case 29: //LSP (set stack by loading stack pointer)
             loadSp(wordSeg.immediate);
+            break;
+        case 30: //UNUSED
             break;
         case 31: //HALT (halt CPU)
             halt = 1;
