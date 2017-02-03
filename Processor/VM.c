@@ -5,7 +5,10 @@
 
 void insert()
 {
-    memory[0][0] = 0xf8000000;
+    memory[0][0] = 0x8000002;
+    memory[0][1] = 0x80200000;
+    memory[0][2] = 0x98200000;
+    memory[0][3] = 0xf8000000;
 }
 
 void fetch(void)
@@ -152,11 +155,11 @@ int main(int argc, char *argv[])
 {
     prexec();
     insert();
-    while(halt == 0) {
-        printf("%i, %i, %i, %i, %i\n", wordSeg.opcode, wordSeg.r1, wordSeg.r2, wordSeg.subop, wordSeg.immediate);
+    do {
         run();
-    }
-    printf("VM safely halted at PC %i\n", PC);
-    printf("A:%i B:%i C:%i D:%i E:%i X:%i Y:%i AP:%i\n",registers[0],registers[1],registers[2],registers[3],registers[4],registers[5],registers[6],registers[7]);
+        printf("PC%i: %i, %i, %i, %i, %i\n", PC-1, wordSeg.opcode, wordSeg.r1, wordSeg.r2, wordSeg.subop, wordSeg.immediate);
+    } while(halt == 0);
+    printf("VM safely halted at PC %i\n", PC-1);
+    printf("A:%i B:%i C:%i D:%i E:%i X:%i Y:%i Z:%i SP:%i RS:%i MS:%i SS:%i\n",registers[0],registers[1],registers[2],registers[3],registers[4],registers[5],registers[6],registers[7], SP, segment.RS, segment.MS, segment.SS);
     exit(0);
 }
