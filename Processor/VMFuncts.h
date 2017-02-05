@@ -1,4 +1,4 @@
-#include "Registers.h"
+#include "read.h"
 #include "VMerror.h"
 
 word jump(halfword address) 
@@ -126,7 +126,7 @@ void interrupt(byte line)
 {
     word vector[] = {8, 16, 24, 32, 40, 48, 56, 64}; 
     RETURN = PC; //save PC state
-    if (line > 9){ //if line is valid: go to designated vector
+    if (line < 9){ //if line is valid: go to designated vector
         jump(vector[line]);
     }
     else {
