@@ -122,15 +122,18 @@ void move(byte src, byte dest) //MOV (move r1 to r2)
     registers[dest] = registers[src];
 }
 
-void interrupt(byte line)
+void interrupt(byte line, flag flags)
 {
-    word vector[] = {8, 16, 24, 32, 40, 48, 56, 64}; 
-    RETURN = PC; //save PC state
-    if (line < 9){ //if line is valid: go to designated vector
-        jump(vector[line]);
-    }
-    else {
-        error(1);
+    if (flags.I == 0) {
+        flags.I = 1; //prevent other interrupts from being called while servicing current one (must be set to 0 in code)
+        word vector[] = {8, 16, 24, 32, 40, 48, 56, 64}; 
+        RETURN = PC; //save PC state
+        if (line < 9){ //if line is valid: go to designated vector
+            jump(vector[line]);
+        }
+        else {
+            error(1);
+        }
     }
 }
 
@@ -224,4 +227,54 @@ void ldSegment(byte subop, halfword immediate)
 void loadSp(halfword immediate)
 {
     SP = immediate;
+}
+
+void setFlag(byte subop, flag flags) 
+{
+    switch(subop) {
+        case 0:
+            flags.C = 0;
+            flags.N = 0;
+            flags.Z = 0;
+            flags.P = 0;
+            flags.I = 0;
+            break;
+        case 1:
+            flags.C = 1;
+            break;
+        case 2: 
+            flags.N = 1;
+            break;
+        case 3: 
+            flags.Z = 1;
+            break;
+        case 4:
+            flags.P = 1;
+            break;
+        case 5:
+            flags.I = 1;
+            break;
+        case 6:
+            flags.C = 0;
+            break;
+        case 7: 
+            flags.N = 0;
+            break;
+        case 8: 
+            flags.Z = 0;
+            break;
+        case 9:
+            flags.P = 0;
+            break;
+        case 10:
+            flags.I = 0;
+            break;
+        case 11:
+            flags.C = 1;
+            flags.N = 1;
+            flags.Z = 1;
+            flags.P = 1;
+            flags.I = 1;
+            break;
+    }   
 }

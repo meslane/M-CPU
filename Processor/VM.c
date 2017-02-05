@@ -75,7 +75,7 @@ void execute(void)
             returnFromSubroutine();
             break;
         case 15: //INT (call interrupt)
-            interrupt(wordSeg.subop);
+            interrupt(wordSeg.subop, flags);
             break;
         case 16: //MOV (move r1 to r2)
             move(wordSeg.r1, wordSeg.r2);
@@ -90,22 +90,22 @@ void execute(void)
         case 19: //ADD (Add r1 to r2 and store in r3)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, ADD);
             break;
-        case 20: //ADC (Add with carry)
+        case 20: //ADC (ADD with carry)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, ADC);
             break;
         case 21: //SUB (Subtract r2 from r1 and store in r3)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, SUB);
             break;
-        case 22: //SBB (Sub wtih borrow)
+        case 22: //SBB (SUB wtih borrow)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, SBB);
             break;
-        case 23: //AND (And r1 and r2 and store in r3)
+        case 23: //AND (AND r1 and r2 and store in r3)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, AND);
             break;
-        case 24: //OR (Or r1 and r2 and store in r3)
+        case 24: //OR (OR r1 and r2 and store in r3)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, OR);
             break;
-        case 25: //XOR (Xor r1 and r2 and store in r3)
+        case 25: //XOR (XOR r1 and r2 and store in r3)
             ALU(wordSeg.r1, wordSeg.r2, wordSeg.subop, XOR);
             break;
         case 26: //LSHIFT (Leftshift r1 by one bit and store in r3)
@@ -121,7 +121,8 @@ void execute(void)
         case 29: //LSP (set stack by loading stack pointer)
             loadSp(wordSeg.immediate);
             break;
-        case 30: //UNUSED
+        case 30: //SETF
+            setFlag(wordSeg.subop, flags);
             break;
         case 31: //HALT (halt CPU)
             halt = 1;
@@ -129,19 +130,24 @@ void execute(void)
     }
 }
 
-void run(void)
+void run(char interruptStatus)
 {
-    fetch(); 
-    decode();
-    execute();     
+    if (interruptStatus == 0) {
+        fetch(); 
+        decode();
+        execute();  
+    }
+    else {
+        interrupt(interruptStatus-1, flags);
+    }
 }
 
 void prexec(void)
 {
     //set segment pointers to start values
     segment.RS = 0;
-    segment.MS = 8;
-    segment.SS = 15;
+    segment.MS = 9;
+    segment.SS = 8;
 }
 
 void postexec(void)
@@ -151,13 +157,48 @@ void postexec(void)
     exit(0);
 }
 
+char testKeyboard(flag flags)
+{
+    unsigned short keypress;
+    if (kbhit() && flags.I == 0){ //if key is pressed and interrupt is not being serviced 
+		keypress = _getch(); //record keypress
+        memory[15][255] = keypress;
+        return 1; //0+1
+	}
+    else {
+        return 0;
+    }
+}
+
+void display(void)
+{
+    /*
+    * 63 = output enable
+    * 64 = data
+    * 65 = clear
+    */
+    if (memory[15][64] != 0 && memory[15][63] != 0) {
+        printf("%c", memory[15][64]);
+        memory[15][64] = 0;
+    }
+    if (memory[15][65] != 0) {
+        system("CLS");
+        printf("============================\n");
+    }
+}
+
 int main(int argc, char *argv[])
 {
+    char interrupt;
     prexec();
     reader();
+    printf("============================\n");
     do {
-        run();
+        interrupt = testKeyboard(flags);
+        run(interrupt);
+        display();
         //printf("PC%i: %i, %i, %i, %i, %i\n", PC-1, wordSeg.opcode, wordSeg.r1, wordSeg.r2, wordSeg.subop, wordSeg.immediate);
     } while(halt == 0);
+    printf("\n============================\n");
     postexec();
 }
