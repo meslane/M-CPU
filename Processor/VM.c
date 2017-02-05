@@ -178,7 +178,7 @@ void display(void)
     * 65 = clear
     */
     if (memory[15][64] != 0 && memory[15][63] != 0) {
-        printf("%c", memory[15][64]);
+        _putch(memory[15][64]);
         memory[15][64] = 0;
     }
     if (memory[15][65] != 0) {
