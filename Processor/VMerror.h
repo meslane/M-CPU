@@ -11,7 +11,7 @@ unsigned char error(unsigned char errnum)
         case 0: //no error
             break;
         case 1: //invalid subop
-            printf("ERROR: subop is not in defined range\n");
+            printf("ERROR FATAL: subop is not in defined range\n");
             exit(1);
             break;
         case 2: //invalid register number
