@@ -45,28 +45,28 @@ void execute(void)
             gotoA(wordSeg.r2, wordSeg.subop, wordSeg.immediate);
             break;
         case 5: //JMPIF C (jump to immediate value if condition designated by subop is met)
-            jumpif(wordSeg.immediate, flags, 0);
+            jumpif(wordSeg.immediate, 0);
             break;
         case 6: //JMPIF NC (jump if not carry)
-            jumpif(wordSeg.immediate, flags, 1);
+            jumpif(wordSeg.immediate, 1);
             break;
         case 7: //JMPIF N (jump if negative)
-            jumpif(wordSeg.immediate, flags, 2);
+            jumpif(wordSeg.immediate, 2);
             break;
         case 8: //JMPIF NN (jump if not negative)
-            jumpif(wordSeg.immediate, flags, 3);
+            jumpif(wordSeg.immediate, 3);
             break;
         case 9: //JMPIF Z (jump if zero)
-            jumpif(wordSeg.immediate, flags, 4);
+            jumpif(wordSeg.immediate, 4);
             break;
         case 10: //JMPIF NZ (jump if not zero)
-            jumpif(wordSeg.immediate, flags, 5);
+            jumpif(wordSeg.immediate, 5);
             break;
         case 11: //JMPIF P (jump if parity)
-            jumpif(wordSeg.immediate, flags, 6);
+            jumpif(wordSeg.immediate, 6);
             break;
         case 12: //JMPIF NP (jump if not parity)
-            jumpif(wordSeg.immediate, flags, 7);
+            jumpif(wordSeg.immediate, 7);
             break;
         case 13: //GSR (goto to immediate value and store PC state in RETURN register)
             gotoSubroutine(wordSeg.immediate);
@@ -75,7 +75,7 @@ void execute(void)
             returnFromSubroutine();
             break;
         case 15: //INT (call interrupt)
-            interrupt(wordSeg.subop, flags);
+            interrupt(wordSeg.subop);
             break;
         case 16: //MOV (move r1 to r2)
             move(wordSeg.r1, wordSeg.r2);
@@ -122,7 +122,7 @@ void execute(void)
             loadSp(wordSeg.immediate);
             break;
         case 30: //SETF
-            setFlag(wordSeg.subop, flags);
+            setFlag(wordSeg.subop);
             break;
         case 31: //HALT (halt CPU)
             halt = 1;
@@ -138,7 +138,7 @@ void run(char interruptStatus)
         execute();  
     }
     else {
-        interrupt(interruptStatus-1, flags);
+        interrupt(interruptStatus-1);
     }
 }
 
@@ -153,16 +153,27 @@ void prexec(void)
 void postexec(void)
 {
     printf("VM safely halted at PC %i\n", PC-1);
-    printf("A:%i B:%i C:%i D:%i E:%i X:%i Y:%i Z:%i SP:%i RS:%i MS:%i SS:%i\n",registers[0],registers[1],registers[2],registers[3],registers[4],registers[5],registers[6],registers[7], SP, segment.RS, segment.MS, segment.SS);
+    printf("A:%i B:%i C:%i D:%i E:%i X:%i Y:%i Z:%i SP:%i RS:%i MS:%i SS:%i C:%i N:%i Z:%i P:%i I:%i\n",registers[0],registers[1],registers[2],registers[3],registers[4],registers[5],registers[6],registers[7], SP, segment.RS, segment.MS, segment.SS, flags.C, flags.N, flags.Z, flags.P, flags.I);
     exit(0);
 }
 
-char testKeyboard(flag flags)
+char testKeyboard()
 {
     unsigned short keypress;
+    unsigned short keypressB;
+    char alt = 0;
     if (kbhit() && flags.I == 0){ //if key is pressed and interrupt is not being serviced 
-		keypress = _getch(); //record keypress
-        memory[15][255] = keypress;
+        keypress = _getch(); //record keypress
+        if (keypress == 0 || keypress == 224) {
+            alt = 1;
+            keypress = _getch();
+        }
+        if (keypress == 10) {
+            memory[15][255] = '\n';
+        }
+        else{
+            memory[15][255] = keypress;
+        }
         return 1; //0+1
 	}
     else {
@@ -194,7 +205,7 @@ int main(int argc, char *argv[])
     reader();
     printf("============================\n");
     do {
-        interrupt = testKeyboard(flags);
+        interrupt = testKeyboard();
         run(interrupt);
         display();
         //printf("PC%i: %i, %i, %i, %i, %i\n", PC-1, wordSeg.opcode, wordSeg.r1, wordSeg.r2, wordSeg.subop, wordSeg.immediate);

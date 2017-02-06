@@ -57,7 +57,7 @@ void gotoA(byte r2, byte subop, halfword immediate)
     }
 }
 
-void jumpif(halfword immediate, flag flags, char condition) //mode = subop, address = IR[1]
+void jumpif(halfword immediate, char condition) //mode = subop, address = IR[1]
 {
     //mode designates what branch if to execute 
     //address designates address to jump to if branch is not rejected 
@@ -122,7 +122,7 @@ void move(byte src, byte dest) //MOV (move r1 to r2)
     registers[dest] = registers[src];
 }
 
-void interrupt(byte line, flag flags)
+void interrupt(byte line)
 {
     if (flags.I == 0) {
         flags.I = 1; //prevent other interrupts from being called while servicing current one (must be set to 0 in code)
@@ -229,7 +229,7 @@ void loadSp(halfword immediate)
     SP = immediate;
 }
 
-void setFlag(byte subop, flag flags) 
+void setFlag(byte subop) 
 {
     switch(subop) {
         case 0:
