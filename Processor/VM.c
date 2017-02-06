@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
 {
     char interrupt;
     prexec();
-    reader();
+    reader(argv[1]);
     printf("============================\n");
     do {
         interrupt = testKeyboard();

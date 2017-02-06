@@ -2,12 +2,8 @@
 
 typedef enum {ROMINSERT, ADDR} readState; 
 
-void reader()
-{
-    printf("Enter name of .mcpu file to load as ROM: ");
-    char file[BUFSIZ];
-    scanf("%s", file);
-    
+void reader(char file[BUFSIZ])
+{   
     FILE *fp;
     fp = fopen(file, "r");
     
