@@ -1770,7 +1770,7 @@ LFB43:
 	movl	%esp, %ebp
 	.cfi_def_cfa_register 5
 	andl	$-16, %esp
-	subl	$32, %esp
+	subl	$16, %esp
 	call	___main
 	call	_prexec
 	movl	12(%ebp), %eax
@@ -1782,8 +1782,7 @@ LFB43:
 	call	_puts
 L179:
 	call	_testKeyboard
-	movb	%al, 31(%esp)
-	movsbl	31(%esp), %eax
+	movsbl	%al, %eax
 	movl	%eax, (%esp)
 	call	_run
 	call	_display
