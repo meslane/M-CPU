@@ -44,28 +44,28 @@ void execute(void)
         case 4: //GOTO (jump to given value)
             gotoA(wordSeg.r2, wordSeg.subop, wordSeg.immediate);
             break;
-        case 5: //JMPIF C (jump to immediate value if condition designated by subop is met)
+        case 5: //JUMPIF C (jump to immediate value if condition designated by subop is met)
             jumpif(wordSeg.immediate, 0);
             break;
-        case 6: //JMPIF NC (jump if not carry)
+        case 6: //JUMPIF NC (jump if not carry)
             jumpif(wordSeg.immediate, 1);
             break;
-        case 7: //JMPIF N (jump if negative)
+        case 7: //JUMPIF N (jump if negative)
             jumpif(wordSeg.immediate, 2);
             break;
-        case 8: //JMPIF NN (jump if not negative)
+        case 8: //JUMPIF NN (jump if not negative)
             jumpif(wordSeg.immediate, 3);
             break;
-        case 9: //JMPIF Z (jump if zero)
+        case 9: //JUMPIF Z (jump if zero)
             jumpif(wordSeg.immediate, 4);
             break;
-        case 10: //JMPIF NZ (jump if not zero)
+        case 10: //JUMPIF NZ (jump if not zero)
             jumpif(wordSeg.immediate, 5);
             break;
-        case 11: //JMPIF P (jump if parity)
+        case 11: //JUMPIF P (jump if parity)
             jumpif(wordSeg.immediate, 6);
             break;
-        case 12: //JMPIF NP (jump if not parity)
+        case 12: //JUMPIF NP (jump if not parity)
             jumpif(wordSeg.immediate, 7);
             break;
         case 13: //GSR (goto to immediate value and store PC state in RETURN register)
