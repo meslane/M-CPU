@@ -1,6 +1,6 @@
 Welcome to M-CPU!
 
-compile VM.c with: gcc -o mcpu vm.c (-S)
+compile VM.c with: gcc -o mcpu vm.c
 
 Programming the M-CPU:
 
