@@ -14,7 +14,7 @@ LC0:
 	.ascii "r\0"
 	.align 4
 LC1:
-	.ascii "ERROR: ROM file not found in current directory\0"
+	.ascii "ERROR FATAL: ROM file not found in current directory\0"
 LC2:
 	.ascii "%x%*[^\12]\12\0"
 	.text

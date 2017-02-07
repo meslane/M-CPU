@@ -8,7 +8,7 @@ void reader(char file[BUFSIZ])
     fp = fopen(file, "r");
     
     if (fp == NULL) {
-        printf("ERROR: ROM file not found in current directory\n");
+        printf("ERROR FATAL: ROM file not found in current directory\n");
         exit(1);
     }
     
