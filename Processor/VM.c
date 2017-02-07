@@ -200,16 +200,15 @@ void display(void)
 
 int main(int argc, char *argv[])
 {
-    char interrupt;
     prexec();
     reader(argv[1]);
     printf("============================\n");
     do {
-        interrupt = testKeyboard();
-        run(interrupt);
+        run(testKeyboard());
         display();
         //printf("PC%i: %i, %i, %i, %i, %i\n", PC-1, wordSeg.opcode, wordSeg.r1, wordSeg.r2, wordSeg.subop, wordSeg.immediate);
     } while(halt == 0);
     printf("\n============================\n");
     postexec();
+    return 0; //normal error-free exit 
 }
