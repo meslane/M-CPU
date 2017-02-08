@@ -41,4 +41,5 @@ void reader(char file[BUFSIZ])
             }
         }
     }
+    fclose(fp);
 }
