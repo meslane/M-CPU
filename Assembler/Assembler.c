@@ -89,7 +89,7 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
     unsigned short immediate; 
     unsigned int output;
     
-    while(!feof(inF)) {
+    while(!feof(inF)) { //TODO: !feof bad, replace it 
         fscanf(inF, "%s",&temp); //analyse first string and branch into if statement 
             printf("%s\n", temp);
             if (strcmp(temp, "NOP") == 0 || strcmp(temp, "nop") == 0) {
