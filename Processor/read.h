@@ -18,8 +18,10 @@ void reader(char file[BUFSIZ])
     
     char amode;
     readState mode = ROMINSERT;
-    while(!feof(fp)) { //file reading
-        fscanf(fp, "%x%*[^\n]\n", &data); //read as hex ints and ignore everything else but \n
+    while(1) { //file reading
+        char scanReturn = fscanf(fp, "%x%*[^\n]\n", &data); //read as hex ints and ignore everything else but \n
+        
+        if (scanReturn == EOF) return; //break from loop if EOF
         
         if (mode == ROMINSERT) { //put data into memory
             if (data == 0xfafaf) { //goto ADDR mode if entry token is found 
