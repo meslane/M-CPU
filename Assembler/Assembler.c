@@ -76,6 +76,14 @@ char getReg(char fileInput, unsigned long line) //take ascii char and return fil
     return out;
 }
 
+void testSubop(unsigned int subop, unsigned long line) 
+{
+    if (subop > 2) {
+        printf("SYNTAX ERROR: line %d\n", line);
+        exit(1);
+    }   
+}
+
 void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
 {
     FILE *inF;
@@ -95,6 +103,9 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
     unsigned long line = 1;
     
     while(1) { 
+        char opcode = 0, r1 = 0, r2 = 0; //set read values to zero just in case 
+        unsigned int subop = 0, immediate = 0, output = 0;
+        
         char scanReturn = fscanf(inF, "%s",&temp); //analyse first string and branch into if statement 
         if (scanReturn != EOF) { 
             printf("%s\n", temp);
@@ -107,8 +118,6 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
                     printf("SYNTAX ERROR: line %d\n", line);
                     exit(1);
                 }
-                (unsigned short) seg;
-                (unsigned short) immediate;
                 output = (seg << 16)|address;
                 fprintf(outF, "fafaf\n"); //address escape
                 fprintf(outF, "%x\n", output);
@@ -120,7 +129,6 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
             else if (strcmp(temp, "LDI") == 0 || strcmp(temp, "ldi") == 0) { //LDI
                 opcode = LDI; //opcode 1
                 fscanf(inF," %c %i%*[^\n]\n", &r1, &immediate); //get r1 and immediate
-                (unsigned short)immediate;
                 r1 = getReg(r1, line);
                 r2 = 0;
                 subop = 0;
@@ -130,15 +138,32 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
             else if (strcmp(temp, "LDA") == 0 || strcmp(temp, "lda") == 0) { //LDA
                 opcode = LDA; //opcode 2
                 fscanf(inF, " %c %c %i %i%*[^\n]\n", &r1, &r2, &subop, &immediate);
-                if (subop > 2) {
-                    printf("SYNTAX ERROR: line %d\n", line);
-                    exit(1);
-                }
+                testSubop(subop, line);
                 r1 = getReg(r1, line);
                 r2 = getReg(r2, line);
-                (char) subop;
-                (unsigned short)immediate;
                 output = (opcode << 27)|(r1 << 24)|(r2 << 21)|(subop << 16)|(immediate);
+                fprintf(outF, "%x\n", output);
+            }
+            else if (strcmp(temp, "STA") == 0 || strcmp(temp, "sta") == 0) {
+                opcode = STA; //opcode 3
+                fscanf(inF, " %c %c %i %i%*[^\n]\n", &r1, &r2, &subop, &immediate);
+                testSubop(subop, line);
+                r1 = getReg(r1, line);
+                r2 = getReg(r2, line);
+                output = (opcode << 27)|(r1 << 24)|(r2 << 21)|(subop << 16)|(immediate);
+                fprintf(outF, "%x\n", output);
+            }
+            else if (strcmp(temp, "GOTO") == 0 || strcmp(temp, "goto") == 0) {
+                opcode = GOTO;
+                fscanf(inF, " %i%*[^\n]\n", &immediate);
+                output = (opcode << 27)|(r1 << 24)|(r2 << 21)|(subop << 16)|(immediate);
+                fprintf(outF, "%x\n", output);
+            }
+            
+            
+            else if (strcmp(temp, "HALT") == 0 || strcmp(temp, "halt") == 0) {
+                opcode = HALT;
+                output = (opcode << 27);
                 fprintf(outF, "%x\n", output);
             }
             line++;

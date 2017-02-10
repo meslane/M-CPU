@@ -42,19 +42,9 @@ void storeA(byte r1, byte r2, byte subop, halfword immediate) //store data in re
     }
 }
 
-void gotoA(byte r2, byte subop, halfword immediate) 
+void gotoA(halfword immediate) 
 {
-    switch(subop) {
-        case 0:
-            jump(immediate);
-            break;
-        case 1:
-            jump(r2);
-            break;
-        case 2:
-            jump(r2 + immediate);
-            break;
-    }
+    jump(immediate);
 }
 
 void jumpif(halfword immediate, char condition) //mode = subop, address = IR[1]

@@ -42,7 +42,7 @@ void execute(void)
             storeA(wordSeg.r1, wordSeg.r2, wordSeg.subop, wordSeg.immediate);
             break;
         case 4: //GOTO (jump to given value)
-            gotoA(wordSeg.r2, wordSeg.subop, wordSeg.immediate);
+            gotoA(wordSeg.immediate);
             break;
         case 5: //JUMPIF C (jump to immediate value if condition designated by subop is met)
             jumpif(wordSeg.immediate, 0);
