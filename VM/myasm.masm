@@ -6,5 +6,4 @@ LSHIFT C C
 LSP fff
 PUSH C 
 POP A
-kkkkk
 HALT 
