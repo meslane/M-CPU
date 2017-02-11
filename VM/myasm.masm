@@ -1,0 +1,10 @@
+SEG 0 ADDRESS 0 
+LDI A ff
+LDI B ff
+ADD A B C
+LSHIFT C C 
+LSP fff
+PUSH C 
+POP A
+kkkkk
+HALT 
