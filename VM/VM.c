@@ -157,7 +157,7 @@ void postexec(void)
     exit(0);
 }
 
-char testKeyboard()
+char testKeyboard(void)
 {
     unsigned short keypress;
     unsigned short keypressB;
