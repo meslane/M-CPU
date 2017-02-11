@@ -2,4 +2,5 @@ SEG 0 ADDRESS 0
 LDI A 2
 LDI B 2
 ADD A B A
-HALT
+RSR //comment test yoooooooooooo
+HALT //and again 

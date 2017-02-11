@@ -106,7 +106,7 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
     outF = fopen(outputFile, "w");
     
     char temp[20];
-    char opcodeStr[10];
+    char unused[BUFSIZ];
     char segR[2];
     char opcode;
     char r1;
@@ -230,6 +230,7 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
             }
             else if (strcmp(temp, "RSR") == 0 || strcmp(temp, "rsr") == 0) {
                 opcode = RSR; //opcode 14
+                fscanf(inF, " %*[^\n]\n", &unused);
                 output = (opcode << 27);
                 fprintf(outF, "%x\n", output);
             }
@@ -369,16 +370,18 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
             }
             else if (strcmp(temp, "HALT") == 0 || strcmp(temp, "halt") == 0) {
                 opcode = HALT; //opcode 31
+                fscanf(inF, " %*[^\n]\n", &unused);
                 output = (opcode << 27);
                 fprintf(outF, "%x\n", output);
             }
             line++;
         }
         else {
+            fclose(inF);
+            fclose(outF);
             return;
         } 
     }
-    printf("%d\n", line);
 }
 
 int main(int argc, char *argv[])

@@ -1,0 +1,10 @@
+SEG 0 ADDRESS 0
+GOTO 11 //jump ahead of interrupt handler
+
+SEG 0 ADDRESS 8
+RSR //ignore all keyboard input 
+
+SEG 0 ADDRESS 11
+LDI A 255
+LSHIFT A A
+HALT
