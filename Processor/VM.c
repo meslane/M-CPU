@@ -78,7 +78,7 @@ void execute(void)
             interrupt(wordSeg.subop);
             break;
         case 16: //MOV (move r1 to r2)
-            move(wordSeg.r1, wordSeg.r2);
+            move(wordSeg.r1, wordSeg.r2); //src, dest
             break;
         case 17: //PUSH (push value in register to stack)
             push(wordSeg.r1);
@@ -193,6 +193,7 @@ void display(void)
         memory[15][64] = 0;
     }
     if (memory[15][65] != 0) {
+        memory[15][65] = 0;
         system("CLS");
         printf("============================\n");
     }

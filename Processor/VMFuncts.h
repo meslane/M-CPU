@@ -186,7 +186,7 @@ word ALU(byte r1, byte r2, byte r3, char operation) //r3 = subop
     }
 
     if (r3 < 8) { //if register exists
-        registers[r3] = (word)result; //cast to unsigned short and put in dest register
+        registers[r3] = (halfword)result; //cast to unsigned short and put in dest register
     }
     else {
         error(2);
