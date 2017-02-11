@@ -28,7 +28,7 @@ LFB17:
 	.cfi_offset 5, -8
 	movl	%esp, %ebp
 	.cfi_def_cfa_register 5
-	subl	$40, %esp
+	subl	$56, %esp
 	movl	$LC0, 4(%esp)
 	movl	8(%ebp), %eax
 	movl	%eax, (%esp)
@@ -42,57 +42,56 @@ LFB17:
 	call	_exit
 L2:
 	movl	$0, -16(%ebp)
-	jmp	L3
-L7:
-	leal	-24(%ebp), %eax
+L9:
+	leal	-28(%ebp), %eax
 	movl	%eax, 8(%esp)
 	movl	$LC2, 4(%esp)
 	movl	-20(%ebp), %eax
 	movl	%eax, (%esp)
 	call	_fscanf
+	movb	%al, -21(%ebp)
+	cmpb	$-1, -21(%ebp)
+	je	L12
 	cmpl	$0, -16(%ebp)
-	jne	L4
-	movl	-24(%ebp), %eax
-	cmpl	$1028015, %eax
 	jne	L5
+	movl	-28(%ebp), %eax
+	cmpl	$1028015, %eax
+	jne	L6
 	movl	$1, -16(%ebp)
-	jmp	L4
-L5:
+	jmp	L5
+L6:
 	movsbl	-9(%ebp), %ecx
 	movzwl	-12(%ebp), %edx
-	movl	-24(%ebp), %eax
+	movl	-28(%ebp), %eax
 	sall	$16, %ecx
 	addl	%ecx, %edx
 	movl	%eax, _memory(,%edx,4)
 	movzwl	-12(%ebp), %eax
 	addl	$1, %eax
 	movw	%ax, -12(%ebp)
-L4:
+L5:
 	cmpl	$1, -16(%ebp)
-	jne	L3
-	movl	-24(%ebp), %eax
+	jne	L9
+	movl	-28(%ebp), %eax
 	cmpl	$1028015, %eax
-	je	L6
-	movl	-24(%ebp), %eax
+	je	L8
+	movl	-28(%ebp), %eax
 	cmpl	$719610, %eax
-	je	L6
-	movl	-24(%ebp), %eax
+	je	L8
+	movl	-28(%ebp), %eax
 	shrl	$16, %eax
 	movb	%al, -9(%ebp)
-	movl	-24(%ebp), %eax
+	movl	-28(%ebp), %eax
 	movw	%ax, -12(%ebp)
-	jmp	L3
-L6:
-	movl	-24(%ebp), %eax
+	jmp	L7
+L8:
+	movl	-28(%ebp), %eax
 	cmpl	$719610, %eax
-	jne	L3
+	jne	L9
 	movl	$0, -16(%ebp)
-L3:
-	movl	-20(%ebp), %eax
-	movl	12(%eax), %eax
-	andl	$16, %eax
-	testl	%eax, %eax
-	je	L7
+L7:
+	jmp	L9
+L12:
 	nop
 	leave
 	.cfi_restore 5
@@ -135,53 +134,53 @@ LFB18:
 	movb	%al, -12(%ebp)
 	movzbl	-12(%ebp), %eax
 	cmpl	$6, %eax
-	ja	L9
-	movl	L11(,%eax,4), %eax
+	ja	L14
+	movl	L16(,%eax,4), %eax
 	jmp	*%eax
 	.section .rdata,"dr"
 	.align 4
-L11:
-	.long	L19
-	.long	L12
-	.long	L13
-	.long	L14
-	.long	L15
-	.long	L16
+L16:
+	.long	L24
 	.long	L17
+	.long	L18
+	.long	L19
+	.long	L20
+	.long	L21
+	.long	L22
 	.text
-L12:
+L17:
 	movl	$LC3, (%esp)
 	call	_puts
 	movl	$1, (%esp)
 	call	_exit
-L13:
+L18:
 	movl	$LC4, (%esp)
 	call	_puts
 	movl	$1, (%esp)
 	call	_exit
-L14:
+L19:
 	movl	$LC5, (%esp)
 	call	_puts
 	movl	$1, (%esp)
 	call	_exit
-L15:
+L20:
 	movl	$LC6, (%esp)
 	call	_puts
 	movl	$1, (%esp)
 	call	_exit
-L16:
+L21:
 	movl	$LC7, (%esp)
 	call	_puts
 	movl	$1, (%esp)
 	call	_exit
-L17:
+L22:
 	movl	$LC8, (%esp)
 	call	_puts
 	movl	$1, (%esp)
 	call	_exit
-L19:
+L24:
 	nop
-L9:
+L14:
 	movzbl	-12(%ebp), %eax
 	leave
 	.cfi_restore 5
@@ -260,13 +259,13 @@ LFB21:
 	movw	%ax, -20(%ebp)
 	movzbl	-16(%ebp), %eax
 	cmpl	$1, %eax
-	je	L25
+	je	L30
 	cmpl	$2, %eax
-	je	L26
+	je	L31
 	testl	%eax, %eax
-	je	L27
-	jmp	L28
-L27:
+	je	L32
+	jmp	L33
+L32:
 	movzbl	-8(%ebp), %eax
 	movzbl	_segment+1, %edx
 	movzbl	%dl, %ecx
@@ -275,8 +274,8 @@ L27:
 	addl	%ecx, %edx
 	movl	_memory(,%edx,4), %edx
 	movw	%dx, _registers(%eax,%eax)
-	jmp	L24
-L25:
+	jmp	L29
+L30:
 	movzbl	-8(%ebp), %eax
 	movzbl	_segment+1, %edx
 	movzbl	%dl, %ecx
@@ -285,8 +284,8 @@ L25:
 	addl	%ecx, %edx
 	movl	_memory(,%edx,4), %edx
 	movw	%dx, _registers(%eax,%eax)
-	jmp	L24
-L26:
+	jmp	L29
+L31:
 	movzbl	-8(%ebp), %eax
 	movzbl	_segment+1, %edx
 	movzbl	%dl, %edx
@@ -298,8 +297,8 @@ L26:
 	movl	_memory(,%edx,4), %edx
 	movw	%dx, _registers(%eax,%eax)
 	nop
-L24:
-L28:
+L29:
+L33:
 	nop
 	addl	$16, %esp
 	popl	%ebx
@@ -333,13 +332,13 @@ LFB22:
 	movw	%ax, -20(%ebp)
 	movzbl	-16(%ebp), %eax
 	cmpl	$1, %eax
-	je	L31
+	je	L36
 	cmpl	$2, %eax
-	je	L32
+	je	L37
 	testl	%eax, %eax
-	je	L33
-	jmp	L34
-L33:
+	je	L38
+	jmp	L39
+L38:
 	movzbl	_segment+1, %eax
 	movzbl	%al, %ecx
 	movzwl	-20(%ebp), %edx
@@ -349,8 +348,8 @@ L33:
 	sall	$16, %ecx
 	addl	%ecx, %edx
 	movl	%eax, _memory(,%edx,4)
-	jmp	L30
-L31:
+	jmp	L35
+L36:
 	movzbl	_segment+1, %eax
 	movzbl	%al, %ecx
 	movzbl	-12(%ebp), %edx
@@ -360,8 +359,8 @@ L31:
 	sall	$16, %ecx
 	addl	%ecx, %edx
 	movl	%eax, _memory(,%edx,4)
-	jmp	L30
-L32:
+	jmp	L35
+L37:
 	movzbl	_segment+1, %eax
 	movzbl	%al, %edx
 	movzbl	-12(%ebp), %ecx
@@ -374,8 +373,8 @@ L32:
 	addl	%ecx, %edx
 	movl	%eax, _memory(,%edx,4)
 	nop
-L30:
-L34:
+L35:
+L39:
 	nop
 	addl	$16, %esp
 	popl	%ebx
@@ -396,41 +395,12 @@ LFB23:
 	.cfi_offset 5, -8
 	movl	%esp, %ebp
 	.cfi_def_cfa_register 5
-	subl	$16, %esp
-	movl	8(%ebp), %ecx
-	movl	12(%ebp), %edx
-	movl	16(%ebp), %eax
-	movb	%cl, -4(%ebp)
-	movb	%dl, -8(%ebp)
-	movw	%ax, -12(%ebp)
-	movzbl	-8(%ebp), %eax
-	cmpl	$1, %eax
-	je	L37
-	cmpl	$2, %eax
-	je	L38
-	testl	%eax, %eax
-	je	L39
-	jmp	L40
-L39:
-	movzwl	-12(%ebp), %eax
+	subl	$8, %esp
+	movl	8(%ebp), %eax
+	movw	%ax, -4(%ebp)
+	movzwl	-4(%ebp), %eax
 	movl	%eax, (%esp)
 	call	_jump
-	jmp	L36
-L37:
-	movzbl	-4(%ebp), %eax
-	movl	%eax, (%esp)
-	call	_jump
-	jmp	L36
-L38:
-	movzbl	-4(%ebp), %edx
-	movzwl	-12(%ebp), %eax
-	addl	%edx, %eax
-	movzwl	%ax, %eax
-	movl	%eax, (%esp)
-	call	_jump
-	nop
-L36:
-L40:
 	nop
 	leave
 	.cfi_restore 5
@@ -1244,13 +1214,7 @@ L131:
 	jmp	L125
 L132:
 	movzwl	_wordSeg+4, %eax
-	movzwl	%ax, %ecx
-	movzbl	_wordSeg+3, %eax
-	movzbl	%al, %edx
-	movzbl	_wordSeg+2, %eax
-	movzbl	%al, %eax
-	movl	%ecx, 8(%esp)
-	movl	%edx, 4(%esp)
+	movzwl	%ax, %eax
 	movl	%eax, (%esp)
 	call	_gotoA
 	jmp	L125
@@ -1742,6 +1706,7 @@ L175:
 	movl	_memory+3932420, %eax
 	testl	%eax, %eax
 	je	L177
+	movl	$0, _memory+3932420
 	movl	$LC11, (%esp)
 	call	_system
 	movl	$LC12, (%esp)
