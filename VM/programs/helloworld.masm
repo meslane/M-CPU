@@ -1,0 +1,38 @@
+SEG 0 ADDRESS 0 
+LSG MS f ;set memory segment to 15
+GOTO ff ;goto main program 
+
+SEG 0 ADDRESS 8
+RSR ;ignore keyboard input
+
+SEG 0 ADDRESS ff
+LDI A 44 ;load hello world string in reverse order (D)
+PUSH A ;push first char to stack
+LDI A 4c ;L
+PUSH A 
+LDI A 52 ;R
+PUSH A 
+LDI A 4f ;O
+PUSH A
+LDI A 57 ;W
+PUSH A 
+LDI A 20 ;(space)
+PUSH A 
+LDI A 4f ;O
+PUSH A
+LDI A 4c ;L
+PUSH A
+LDI A 4c ;L
+PUSH A
+LDI A 45 ;E
+PUSH A 
+LDI A 48 ;H
+PUSH A
+LDI B b ;load B with # of chars in string
+LDI C 1 ;load C with decrement amount 
+STA B N 0 3f ;set output enable 
+POP A 
+STA A N 0 40 ;load char to output area 
+SUB B C B ;subtract C from B and store in B 
+JUMPIFNZ 118 ;keep outputting if not end of string 
+HALT ;halt if end of string
