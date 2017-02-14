@@ -20,7 +20,7 @@ void decode(void)
 void execute(void)
 {
     switch (wordSeg.opcode) {
-        case 0: //NOP (no operation
+        case 0: //NOP (no operation)
             return;
             break;
         /* Addressing operation format:  

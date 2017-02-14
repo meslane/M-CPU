@@ -24,7 +24,7 @@ halfword registers[8]; //all programmer-accessible registers except PC
 * [2] = C
 * [3] = D
 * [4] = E
-* [5] = X General-purpose, but used ideally used for indexing
+* [5] = X General-purpose, but ideally used for indexing
 * [6] = Y
 * [7] = Z 
 */
@@ -34,7 +34,7 @@ halfword SP; //Stack Pointer
 
 typedef struct {
     byte RS; //ROM Segment Pointer (PC should use this) 
-    byte MS; //RAM Segment Pointer (MST/MLD should use this)
+    byte MS; //RAM Segment Pointer (LDA/STA should use this)
     byte SS; //Stack Segment Pointer (SP should use this)
 } segPointer; 
 
