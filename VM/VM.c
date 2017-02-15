@@ -153,8 +153,7 @@ void prexec(void)
 void postexec(void)
 {
     printf("VM safely halted at PC %i\n", PC-1);
-    printf("A:%i B:%i C:%i D:%i E:%i X:%i Y:%i Z:%i SP:%i RP:%i RS:%i MS:%i SS:%i C:%i N:%i Z:%i P:%i I:%i\n",registers[0],registers[1],registers[2],registers[3],registers[4],registers[5],registers[6],registers[7], SP, RP, segment.RS, segment.MS, segment.SS, flags.C, flags.N, flags.Z, flags.P, flags.I);
-    exit(0);
+    printf("A:%i B:%i C:%i D:%i E:%i X:%i Y:%i Z:%i SP:%i RP:%i RS:%i MS:%i SS:%i C:%i N:%i Z:%i P:%i I:%i Cycles:%i\n",registers[0],registers[1],registers[2],registers[3],registers[4],registers[5],registers[6],registers[7], SP, RP, segment.RS, segment.MS, segment.SS, flags.C, flags.N, flags.Z, flags.P, flags.I, cycles);
 }
 
 char testKeyboard(void)
@@ -207,6 +206,7 @@ int main(int argc, char *argv[])
     do {
         run(testKeyboard());
         display();
+        cycles++;
         //printf("PC%i: %i, %i, %i, %i, %i\n", PC-1, wordSeg.opcode, wordSeg.r1, wordSeg.r2, wordSeg.subop, wordSeg.immediate);
     } while(halt == 0);
     printf("\n============================\n");

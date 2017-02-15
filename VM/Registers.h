@@ -67,4 +67,6 @@ char RP = 15; //call stack pointer
 
 word IR; //instruction register
 
+unsigned long cycles;
+
 char halt;
