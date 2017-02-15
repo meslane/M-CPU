@@ -191,7 +191,7 @@ word ALU(byte r1, byte r2, byte r3, char operation) //r3 = subop
     }
     
     if (result > 65535) {
-        flags.C = 1; //set carry flag if number is too big for 16 bits or if operation is SUB and A<B
+        flags.C = 1; //set carry flag if number is too big for 16 bits
     }
     if (result < 0) {
         flags.N = 1; //set negative flag if number is less than zero 
