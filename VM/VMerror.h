@@ -39,6 +39,12 @@ unsigned char error(unsigned char errnum)
         case 8: //call stack underflow
             printf("ERROR FATAL: return without matching subroutine call\n");
             exit(1);
+        case 9: //stack undererflow
+            printf("ERROR FATAL: stack underflow\n");
+            exit(1);
+        case 10: //stack overflow
+            printf("ERROR FATAL: stack overflow\n");
+            exit(1);
     }
     return errnum;
 }

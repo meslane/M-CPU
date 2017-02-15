@@ -1,7 +1,6 @@
 Welcome to M-CPU!
 
-Instruction List:
-
+INSTRUCTION LIST:
 NOP: no operation
 LDI: load immediate into register
 LDA: load data from address into register
@@ -34,3 +33,38 @@ LSG: set segment register
 LSP: set stack pointer
 SETF: set flag(s)
 HALT: halt vm 
+
+
+REGISTERS:
+The M-CPU has 8 general-puropse data registers:
+(A, B, C, D, E, X, Y, Z)
+A program counter:
+(PC)
+A stack pointer:
+(SP)
+A call stack pointer:
+(RP) 
+Three segment pointers:
+(RS, MS, SS) 
+An instruction register:
+(IR)
+And Five flags:
+(C, N, Z, P, I)
+
+
+MEMORY:
+The M-CPU has 16 segments of 65536 words of memory, or 4 megabytes total.
+Each segment pointer addresses a different segment to be used for different puropses.
+However, multiple pointers CAN point to the same segment. 
+Since each word is stored in a single memory location, the M-CPU has no defined endianness, 
+but arrays are ideally big-endian while the stacks grow from the highest to lowest address.
+
+
+THE STACKS:
+The M-CPU has a stack in memory and a seperate isolated call stack for return addresses.
+The call stack is only accessible via the GSR and RSR instructions, and can go 16 subroutine levels deep before overflowing.
+If the call stack overflows, the M-CPU will raise an error and halt immediately.  
+The general-purpose stack is accessed via the PUSH and POP instructions,
+can be used to hold any data and can occupy an entire segment (65536 levles) before overflowing.
+A stack overflow will raise an error, just as the call stack does.  
+

@@ -141,12 +141,18 @@ void interrupt(byte line)
 
 void push(byte r1) 
 {
+    if (SP == 0){
+        error(10); //test for stack overflow
+    }
     SP--; //increase stack size to make room for new entry
     memory[segment.SS][SP] = registers[r1]; //set memory at SP location to value in given register
 }
 
 void pop(byte r1)
 {
+    if (SP == 65535){
+        error(9); //test for stack underflow
+    }
     registers[r1] = memory[segment.SS][SP]; //pop top stack entry into given register
     SP++; //decrease stack size to remove now-vacant entry
 }

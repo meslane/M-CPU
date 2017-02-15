@@ -1,5 +1,6 @@
 SEG 0 ADDRESS 0 
 LSG MS f ;set memory segment to 15
+LSP ffff ;set SP to max value 
 GOTO ff ;goto main program 
 
 SEG 0 ADDRESS 8
