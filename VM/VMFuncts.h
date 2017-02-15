@@ -186,15 +186,15 @@ word ALU(byte r1, byte r2, byte r3, char operation) //r3 = subop
             result = registers[r1] + registers[r2] + flags.C;
             break;
         case SBB: //subtract with borrow
-            result = registers[r1] - (registers[r2] + flags.C);
+            result = registers[r1] - (registers[r2] + flags.N);
             break;
     }
     
-    if (result > 65535 || (operation == SUB && registers[r1] < registers[r2])) {
+    if (result > 65535) {
         flags.C = 1; //set carry flag if number is too big for 16 bits or if operation is SUB and A<B
     }
     if (result < 0) {
-        flags.N = 1; //set negative flag if number is too small for 16 bits
+        flags.N = 1; //set negative flag if number is less than zero 
     }
     if (result == 0) {
         flags.Z = 1; //set zero flag if number is zero
