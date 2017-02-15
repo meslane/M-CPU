@@ -62,7 +62,8 @@ wordSegment wordSeg;
 segPointer segment;
 flag flags;
 
-halfword RETURN; //Return address for subroutine calls
+halfword RETURN[16]; //Return address call stack for subroutine calls
+char RP = 15; //call stack pointer 
 
 word IR; //instruction register
 

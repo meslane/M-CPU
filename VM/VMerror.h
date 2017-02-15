@@ -33,6 +33,12 @@ unsigned char error(unsigned char errnum)
         case 6: //segment out of range 
             printf("ERROR FATAL: nonexistent segment\n");
             exit(1);
+        case 7: //call stack overflow
+            printf("ERROR FATAL: too many subroutine calls\n");
+            exit(1);
+        case 8: //call stack underflow
+            printf("ERROR FATAL: return without matching subroutine call\n");
+            exit(1);
     }
     return errnum;
 }

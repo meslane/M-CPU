@@ -98,13 +98,21 @@ void jumpif(halfword immediate, char condition) //mode = subop, address = IR[1]
 
 void gotoSubroutine(halfword immediate)
 {
-    RETURN = PC; //store current PC state
+    RP--;
+    RETURN[RP] = PC;
+    if (RP < 0) {
+        error(7);
+    }
     jump(immediate); //goto subroutine
 }
 
 void returnFromSubroutine(void)
 {
-    PC = RETURN; //restore return address to PC
+    PC = RETURN[RP]; //restore return address to PC
+    RP++;
+    if (RP > 15) {
+        error(8);
+    }
 }
 
 void move(byte src, byte dest) //MOV (move r1 to r2)
@@ -117,7 +125,11 @@ void interrupt(byte line)
     if (flags.I == 0) {
         flags.I = 1; //prevent other interrupts from being called while servicing current one (must be set to 0 in code)
         word vector[] = {8, 16, 24, 32, 40, 48, 56, 64}; 
-        RETURN = PC; //save PC state
+        RP--; //save PC state 
+        RETURN[RP] = PC;
+        if (RP < 0) {
+            error(7);
+        }
         if (line < 9){ //if line is valid: go to designated vector
             jump(vector[line]);
         }
