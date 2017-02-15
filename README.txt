@@ -67,3 +67,10 @@ The general-purpose stack is accessed via the PUSH and POP instructions, can be 
 A stack overflow will raise an error, just as the call stack does.  
 
 
+FLAGS:
+The M-CPU has five flags, four of which are raised by the ALU and one of which is triggered by interrupt calls.
+C: Carry flag, triggered if ALU output is > 65535 OR r1 < r2 and operation is SUB
+N: Negative flag, triggered if ALU output is > 0 
+Z: Zero flag, triggered if ALU output == 0
+P: Parity flag, triggered if ALU output is odd
+I: Interrupt service flag, triggered on interrupt  
