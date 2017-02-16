@@ -1,0 +1,45 @@
+SEG 0 ADDRESS 0
+LSP ffff ;set stack pointer to max
+LSG MS f ;set memory segment to 15
+GSR aaa ;setup array for register display 
+GOTO ff ;goto main program
+
+SEG 0 ADDRESS 8
+RSR ;ignore keyboard 
+
+SEG 0 ADDRESS aaa ;char array setup 
+LDI A 30 
+STA A N 0 0 
+LDI A 31 
+STA A N 0 1
+LDI A 32 
+STA A N 0 2
+LDI A 33 
+STA A N 0 3
+LDI A 34 
+STA A N 0 4
+LDI A 35 
+STA A N 0 5
+LDI A 36 
+STA A N 0 6
+LDI A 37 
+STA A N 0 7
+LDI A 38 
+STA A N 0 8
+LDI A 39 
+STA A N 0 9
+LDI A 41 
+STA A N 0 a
+LDI A 42 
+STA A N 0 b
+LDI A 43 
+STA A N 0 c
+LDI A 44 
+STA A N 0 d
+LDI A 45 
+STA A N 0 e
+LDI A 46 
+STA A N 0 f               
+RSR
+
+
