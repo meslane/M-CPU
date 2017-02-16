@@ -20,14 +20,38 @@ JUMPIFNC 100 ;contine adding
 HALT ;halt if overflow 
 
 SEG 0 ADDRESS aaa ;char array setup 
-LDI B f
-LDI C 1 
-LDI D 30 
-SUB B C B ;decrementing loop 
-ADD D B D ;char value 
-STA D B 1 0 ;store value at address 
-JUMPIFNZ aac ;keep loading array if not zero 
-SETF 8 ;clear zero flag
+LDI A 30 
+STA A N 0 0 
+LDI A 31 
+STA A N 0 1
+LDI A 32 
+STA A N 0 2
+LDI A 33 
+STA A N 0 3
+LDI A 34 
+STA A N 0 4
+LDI A 35 
+STA A N 0 5
+LDI A 36 
+STA A N 0 6
+LDI A 37 
+STA A N 0 7
+LDI A 38 
+STA A N 0 8
+LDI A 39 
+STA A N 0 9
+LDI A 41 
+STA A N 0 a
+LDI A 42 
+STA A N 0 b
+LDI A 43 
+STA A N 0 c
+LDI A 44 
+STA A N 0 d
+LDI A 45 
+STA A N 0 e
+LDI A 46 
+STA A N 0 f               
 RSR
 
 SEG 0 ADDRESS fff ;print hex value subroutine
