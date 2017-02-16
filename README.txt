@@ -73,4 +73,9 @@ C: Carry flag, triggered if ALU output is > 65535
 N: Negative flag, triggered if ALU output is > 0 
 Z: Zero flag, triggered if ALU output == 0
 P: Parity flag, triggered if ALU output is odd
-I: Interrupt service flag, triggered on interrupt  
+I: Interrupt service flag, triggered on interrupt
+
+
+ASSEMBLER:
+The MASM (M-CPU assembler) assembles .masm files into .mcpu files that can be read by the M-CPU 
+Syntax errors may cause the MASM to halt but often also result in undefined behavior that will not produce a helpful error message.
