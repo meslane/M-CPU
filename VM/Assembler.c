@@ -70,7 +70,7 @@ char getReg(char fileInput, unsigned long line) //take ascii char and return fil
         out = 0;
     }
     else {
-        printf("SYNTAX ERROR: line %d\n", line);
+        printf("SYNTAX ERROR: Invalid Register, line %d Given Value: %c\n", line, fileInput);
         exit(1);
     }
     return out;
@@ -92,7 +92,7 @@ char getSr(char fileInput[2], unsigned long line)
 void testSubop(unsigned int subop, unsigned long line) 
 {
     if (subop > 2) {
-        printf("SYNTAX ERROR: line %d\n", line);
+        printf("SYNTAX ERROR: Invalid Subop, line %d\n", line);
         exit(1);
     }   
 }
@@ -117,8 +117,10 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
     unsigned long line = 1;
     
     while(1) { 
-        char opcode = 0, r1 = 0, r2 = 0; //set read values to zero just in case 
+        char opcode = 0, r1 = 0, r2 = 0, r3 = 0; //set read values to zero just in case 
         unsigned int subop = 0, immediate = 0, output = 0;
+        segR[0] = '\0';
+        temp[0] = '\0';
         
         char scanReturn = fscanf(inF, "%s",&temp); //analyse first string and branch into if statement 
         if (scanReturn != EOF) { 
@@ -360,7 +362,7 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
                 opcode = SETF;
                 fscanf(inF, " %x%*[^\n]\n", &subop);
                 if (subop > 11) {
-                    printf("SYNTAX ERROR: line %d\n", line);
+                    printf("SYNTAX ERROR: Invalid Flag Set, line %d\n", line);
                     exit(1);
                 }
                 output = (opcode << 27)|(r1 << 24)|(r2 << 21)|(subop << 16)|(immediate);

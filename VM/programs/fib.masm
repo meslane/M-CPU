@@ -1,0 +1,74 @@
+;fff = value for print store 
+;0 - f = char array with address equaling ASCII character
+SEG 0 ADDRESS 0
+LSP ffff ;set stack pointer to max
+LSG MS f ;set memory segment to 15
+GSR aaa ;setup array for register display 
+GOTO ff ;jump ahead to main program
+
+SEG 0 ADDRESS 8
+RSR ;ignore keyboard input
+
+SEG 0 ADDRESS ff
+LDI A 1 
+PUSH A
+ADD A B A 
+POP B 
+STA A N 0 fff ;load result to print store 
+GSR fff ;call print subroutine
+JUMPIFNC 100 ;contine adding 
+HALT ;halt if overflow 
+
+SEG 0 ADDRESS aaa ;char array setup 
+LDI B f
+LDI C 1 
+LDI D 30 
+SUB B C B ;decrementing loop 
+ADD D B D ;char value 
+STA D B 1 0 ;store value at address 
+JUMPIFNZ aac ;keep loading array if not zero 
+SETF 8 ;clear zero flag
+RSR
+
+SEG 0 ADDRESS fff ;print hex value subroutine
+LDA D N 0 fff; get value 
+MOV D E ;move value into four registers  
+MOV D X 
+MOV D Y 
+MOV D Z
+LDI C c ;first for loop 
+LDI D 1 
+SUB C D C
+RSHIFT E E;shift first character 12 places
+JUMPIFNZ 106 ;contine loop if not end condition 
+LDI C f ;mask to four bits 
+AND E C E
+SETF 8 ;clear zero flag 
+LDI C 8 ;second for loop 
+LDI D 1
+SUB C D C 
+RSHIFT X X;shift second character 8 places 
+JUMPIFNZ 10c ;contine loop if not end condition 
+LDI C f ;mask to four bits
+AND X C X
+SETF 8 ;clear zero flag
+LDI C 4 ;third for loop 
+LDI D 1
+SUB C D C 
+RSHIFT Y Y ;shift third character 4 places
+JUMPIFNZ 113 ;contine loop if not end condition 
+LDI C f ;mask to four bits 
+AND Y C Y
+AND Z C Z ;mask z, no shifting required 
+LDA C E 1 0 ;get first char 
+STA C N 0 3f ;output enable
+STA C N 0 40 ;display first char 
+LDA C X 1 0 ;get second char 
+STA C N 0 40 ;display second char 
+LDA C Y 1 0 ;get third char 
+STA C N 0 40 ;display third char 
+LDA C Z 1 0 ;get last char 
+STA C N 0 40 ;display last char 
+LDI C a ;load newline 
+STA C N 0 40 ;print newline 
+RSR 
