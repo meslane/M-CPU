@@ -9,10 +9,10 @@ RSR
 
 SEG 0 ADDRESS ff
 LDI A 1
+GSR fff
 MOV C B
 MOV A C 
 ADD A B A 
-GSR fff
 JUMPIFNC 100
 HALT
 
@@ -57,7 +57,7 @@ SEG 0 ADDRESS bbb ;masking loop subroutine
 LDI C 1
 SUB B C B 
 RSHIFT A A
-JUMPIFNZ bbd
+JUMPIFNZ bbc
 LDI B f
 AND A B A ;mask to 4 bits 
 SETF 8 ;reset zero flag to zero 
