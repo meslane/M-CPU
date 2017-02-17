@@ -152,8 +152,8 @@ void prexec(void)
 
 void postexec(void)
 {
-    printf("VM safely halted at PC %i\n", PC-1);
-    printf("A:%i B:%i C:%i D:%i E:%i X:%i Y:%i Z:%i SP:%i RP:%i RS:%i MS:%i SS:%i C:%i N:%i Z:%i P:%i I:%i Cycles:%i\n",registers[0],registers[1],registers[2],registers[3],registers[4],registers[5],registers[6],registers[7], SP, RP, segment.RS, segment.MS, segment.SS, flags.C, flags.N, flags.Z, flags.P, flags.I, cycles);
+    printf("VM safely halted at PC HEX:%x DEC:%i\n", PC-1, PC-1);
+    printf("A:%x B:%x C:%x D:%x E:%x X:%x Y:%x Z:%x SP:%x RP:%x RS:%x MS:%x SS:%x C:%x N:%x Z:%x P:%x I:%x Cycles:%i\n",registers[0],registers[1],registers[2],registers[3],registers[4],registers[5],registers[6],registers[7], SP, RP, segment.RS, segment.MS, segment.SS, flags.C, flags.N, flags.Z, flags.P, flags.I, cycles);
 }
 
 char testKeyboard(void)

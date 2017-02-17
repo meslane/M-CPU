@@ -79,3 +79,25 @@ I: Interrupt service flag, triggered on interrupt
 ASSEMBLER:
 The MASM (M-CPU assembler) assembles .masm files into .mcpu files that can be read by the M-CPU 
 Syntax errors may cause the MASM to halt but often also result in undefined behavior that will not produce a helpful error message.
+
+
+SETF CODES:
+The SETF instruction uses a 0-11 subop code to set flags, the codes are as follows:
+0: all flags = 0
+1: C = 1
+2: N = 1
+3: Z = 1
+4: P = 1
+5: I = 1
+6: C = 0
+7: N = 0
+8: Z = 0
+9: P = 0
+10: I = 0
+11: all flags = 1
+
+
+ADDRESSING MODES:
+0 = immedate 
+1 = register 2 
+2 = register 2 + immediate 

@@ -19,10 +19,10 @@ void loadA(byte r1, byte r2, byte subop, halfword immediate) //load register wit
             registers[r1] = memory[segment.MS][immediate]; //set r1 equal to data at immediate address
             break;
         case 1: 
-            registers[r1] = memory[segment.MS][r2]; //set r1 equal to data at address in r2
+            registers[r1] = memory[segment.MS][registers[r2]]; //set r1 equal to data at address in r2
             break;
         case 2:
-            registers[r1] = memory[segment.MS][r2 + immediate]; //set r1 equal to data at address in r2 + immediate
+            registers[r1] = memory[segment.MS][registers[r2] + immediate]; //set r1 equal to data at address in r2 + immediate
             break;
     }
 }
@@ -34,10 +34,10 @@ void storeA(byte r1, byte r2, byte subop, halfword immediate) //store data in re
             memory[segment.MS][immediate] = registers[r1]; //set memory address at immediate equal to r1's data
             break;
         case 1: 
-            memory[segment.MS][r2] = registers[r1]; //set memory address at r2 equal to r1's data
+            memory[segment.MS][registers[r2]] = registers[r1]; //set memory address at r2 equal to r1's data
             break;
         case 2:
-            memory[segment.MS][r2 + immediate] = registers[r1]; //set memory address at r2 + immediate equal to r1's data
+            memory[segment.MS][registers[r2] + immediate] = registers[r1]; //set memory address at r2 + immediate equal to r1's data
             break;
     }
 }

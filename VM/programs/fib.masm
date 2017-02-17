@@ -14,7 +14,7 @@ LDI A 1
 PUSH A
 ADD A B A 
 POP B 
-STA A N 0 fff ;load result to print store 
+
 GSR fff ;call print subroutine
 JUMPIFNC 100 ;contine adding 
 HALT ;halt if overflow 
@@ -55,7 +55,6 @@ STA A N 0 f
 RSR
 
 SEG 0 ADDRESS fff ;print hex value subroutine
-LDA D N 0 fff; get value 
 MOV D E ;move value into four registers  
 MOV D X 
 MOV D Y 

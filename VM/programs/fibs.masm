@@ -1,0 +1,102 @@
+SEG 0 ADDRESS 0 
+LSP ffff
+LSG MS f ;set MS to output segment 
+GSR aaa ;setup output array 
+GOTO ff ;do main loop 
+
+SEG 0 ADDRESS 8
+RSR
+
+SEG 0 ADDRESS ff
+LDI A 1
+MOV C B
+MOV A C 
+ADD A B A 
+GSR fff
+JUMPIFNC 100
+HALT
+
+SEG 0 ADDRESS aaa ;char array setup subroutine 
+LDI A 30 
+STA A N 0 0 
+LDI A 31 
+STA A N 0 1
+LDI A 32 
+STA A N 0 2
+LDI A 33 
+STA A N 0 3
+LDI A 34 
+STA A N 0 4
+LDI A 35 
+STA A N 0 5
+LDI A 36 
+STA A N 0 6
+LDI A 37 
+STA A N 0 7
+LDI A 38 
+STA A N 0 8
+LDI A 39 
+STA A N 0 9
+LDI A 41 
+STA A N 0 a
+LDI A 42 
+STA A N 0 b
+LDI A 43 
+STA A N 0 c
+LDI A 44 
+STA A N 0 d
+LDI A 45 
+STA A N 0 e
+LDI A 46 
+STA A N 0 f               
+RSR
+
+SEG 0 ADDRESS bbb ;masking loop subroutine 
+;register B = for loop perameter
+;register A = value to be shifted 
+LDI C 1
+SUB B C B 
+RSHIFT A A
+JUMPIFNZ bbd
+LDI B f
+AND A B A ;mask to 4 bits 
+SETF 8 ;reset zero flag to zero 
+RSR 
+
+SEG 0 ADDRESS fff ;printing subroutine 
+PUSH A
+PUSH B
+PUSH C ;save state 
+PUSH A ;save A 
+LDI B c ;first for loop 
+GSR bbb
+MOV A E ;store first nibble 
+POP A ;restore A
+PUSH A ;save A 
+LDI B 8 ;second for loop
+GSR bbb
+MOV A X ;store second nibble 
+POP A ;restore A
+PUSH A ;save A 
+LDI B 4 ;third for loop
+GSR bbb 
+MOV A Y ;store third nibble
+POP A ;restore A
+MOV A Z
+LDI B f
+AND Z B Z ;mask Z
+LDA E E 1 0 ;load registers with array char value 
+LDA X X 1 0
+LDA Y Y 1 0
+LDA Z Z 1 0
+STA E N 0 3f ;output enable 
+STA E N 0 40 ;output 
+STA X N 0 40
+STA Y N 0 40 
+STA Z N 0 40
+LDI Z a
+STA Z N 0 40
+POP C
+POP B
+POP A
+RSR 
