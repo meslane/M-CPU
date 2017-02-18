@@ -1,20 +1,37 @@
-SEG 0 ADDRESS 0 
-LSP ffff
-LSG MS f ;set MS to output segment 
+SEG 0 ADDRESS 0
+LSP ffff ;set stack to highest possible value 
+LSG MS f ;set memory segment to output segment 
 GSR aaa ;setup output array 
-GOTO ff ;do main loop 
+GOTO ff ;goto main loop 
 
 SEG 0 ADDRESS 8
-RSR
+RSR ;ignore keybaord input 
 
 SEG 0 ADDRESS ff
-LDI A 1
-GSR fff
-MOV C B
-MOV A C 
-ADD A B A 
-JUMPIFNC 100
-HALT
+LDI A 1ff
+MOV A D ;test if one or not 
+LDI B 1 
+SUB D B D 
+JUMPIFZ 1cc
+GSR fff ;print value 
+ADD A C A ;add to zero to determine parity 
+JUMPIFP 1aa ;goto multiply by three and add one if number is odd 
+JUMPIFNP 1bb ;goto divide by two if number is even 
+
+SEG 0 ADDRESS 1aa
+MOV A B ;save a 
+ADD A A A ;*2
+ADD A B A ;*3 
+LDI B 1 
+ADD A B A ;add one 
+GOTO 101 
+
+SEG 0 ADDRESS 1bb
+RSHIFT A A ;rightshift one (same as divide by two)
+GOTO 101 
+
+SEG 0 ADDRESS 1cc
+HALT 
 
 SEG 0 ADDRESS aaa ;char array setup subroutine 
 LDI A 30 
@@ -63,11 +80,10 @@ AND A B A ;mask to 4 bits
 SETF 8 ;reset zero flag to zero 
 RSR 
 
-SEG 0 ADDRESS fff ;printing subroutine 
+SEG 0 ADDRESS fff ;printing subroutine  
 PUSH A
-PUSH B
-PUSH C ;save state 
-PUSH A ;save A 
+PUSH A
+MOV A D
 LDI B c ;first for loop 
 GSR bbb
 MOV A E ;store first nibble 
@@ -96,8 +112,12 @@ STA Y N 0 40
 STA Z N 0 40
 LDI Z a
 STA Z N 0 40
-POP C ;restore states
-POP B
+LDI B 0
+LDI C 0  
+LDI E 0 
+LDI X 0
+LDI Y 0
+LDI Z 0 ;clear everything that was used 
 POP A
-SETF 8 ;reset zero flag 
+SETF 0 ;clear all flags  
 RSR 

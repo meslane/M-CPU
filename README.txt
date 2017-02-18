@@ -93,11 +93,32 @@ The SETF instruction uses a 0-11 subop code to set flags, the codes are as follo
 7: N = 0
 8: Z = 0
 9: P = 0
-10: I = 0
-11: all flags = 1
+a: I = 0
+b: all flags = 1
 
 
 ADDRESSING MODES:
+Addressing modes are used with the LDA and STA instructions and defined by the subop, they are as follows:
 0 = immedate 
 1 = register 2 
 2 = register 2 + immediate 
+
+
+INPUT AND OUTPUT:
+The M-CPU has two ways of communicating with the user: a memory-mapped keyboard and a memory-mapped display.
+The keyboard inputs data to SEG f(15) ADDRESS ff(255).
+They display has three ports all at SEG f(15):
+ADDRESS 3f(63): Output enable 
+ADDRESS 40(64): Data 
+ADDRESS 41(65): Clear screen 
+If output enable is nonzero, the screen will display data. This can only be disabled/enabled by the programmer.
+If data is nonzero, the screen will display the ASCII char with the given value, this is reset to zero after each display cycle.
+If clear screen is nonzero, the screen will be completely cleared, this is reset to zero immediately after the screen is cleared.
+
+
+INTERRUPTS:
+The M-CPU has eight interrupt vectors of 8 words each located at 0x8 to 0x40.
+Each interrupt can be called by using the INT instruction and otherwise functions just like a subroutine. 
+Whenever an interrupt is called, the I flag is set. When the I flag is active, all other interrupts will be ignored.
+The I flag is set by the M-CPU but is not reset by it, therefore, the programmer must set I to 0 after every interrupt service request.
+

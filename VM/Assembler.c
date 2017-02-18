@@ -70,7 +70,7 @@ char getReg(char fileInput, unsigned long line) //take ascii char and return fil
         out = 0;
     }
     else {
-        printf("SYNTAX ERROR: Invalid Register, line %d Given Value: %c\n", line, fileInput);
+        printf("SYNTAX ERROR: Invalid Register, instruction %d Given Value: %c\n", line, fileInput);
         exit(1);
     }
     return out;
@@ -92,7 +92,7 @@ char getSr(char fileInput[2], unsigned long line)
 void testSubop(unsigned int subop, unsigned long line) 
 {
     if (subop > 2) {
-        printf("SYNTAX ERROR: Invalid Subop, line %d\n", line);
+        printf("SYNTAX ERROR: Invalid Subop, instruction %d\n", line);
         exit(1);
     }   
 }
@@ -131,7 +131,7 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
                 int address;
                 fscanf(inF, " %x %s %x%*[^\n]\n", &seg, &stringTemp, &address);
                 if (strcmp(stringTemp, "ADDRESS") != 0 && strcmp(stringTemp, "address") != 0) {
-                    printf("SYNTAX ERROR: line %d\n", line);
+                    printf("SYNTAX ERROR: instruction %d\n", line);
                     exit(1);
                 }
                 output = (seg << 16)|address;
@@ -362,7 +362,7 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
                 opcode = SETF;
                 fscanf(inF, " %x%*[^\n]\n", &subop);
                 if (subop > 11) {
-                    printf("SYNTAX ERROR: Invalid Flag Set, line %d\n", line);
+                    printf("SYNTAX ERROR: Invalid Flag Set, instruction %d\n", line);
                     exit(1);
                 }
                 output = (opcode << 27)|(r1 << 24)|(r2 << 21)|(subop << 16)|(immediate);

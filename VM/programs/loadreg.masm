@@ -1,0 +1,92 @@
+SEG 0 ADDRESS 0
+LSP ffff ;set stack 
+LSG MS f ;set memory segment to 15
+LDI C 4
+LDI D 1
+STA C N 0 3f ;set ouput enable
+GSR 100 ;setup deconstruction array
+GOTO 1f
+
+SEG 0 ADDRESS 8
+LDA A N 0 ff ;get keyboard input
+STA A N 0 40 ;echo input 
+PUSH A ;push A to the stack 
+SUB C D C 
+JUMPIFZ aa
+SETF 0 ;all flags to zero
+RSR 
+
+SEG 0 ADDRESS 1f 
+GOTO 1f 
+
+SEG 0 ADDRESS aa
+SETF 8 ;reset zero flag 
+POP E 
+POP D
+POP C 
+POP B
+LDA B B 1 0
+LDA C C 1 0
+LDA D D 1 0
+LDA E E 1 0
+MOV B Y ;first value to shift 
+LDI X c
+GSR 222
+MOV Y B ;restore 
+MOV C Y ;second value to shift 
+LDI X 8
+GSR 222
+MOV Y C ;restore
+MOV D Y ;third value to shift 
+LDI X 4
+GSR 222
+MOV Y D ;restore
+OR B C B
+OR D E D
+OR B D A ;or values together 
+HALT
+
+SEG 0 ADDRESS 100 ;input deconstruction array
+LDI A 0
+STA A N 0 30
+LDI A 1
+STA A N 0 31 
+LDI A 2
+STA A N 0 32
+LDI A 3
+STA A N 0 33
+LDI A 4
+STA A N 0 34
+LDI A 5
+STA A N 0 35
+LDI A 6
+STA A N 0 36
+LDI A 7
+STA A N 0 37
+LDI A 8
+STA A N 0 38
+LDI A 9
+STA A N 0 39
+LDI A a 
+STA A N 0 61
+LDI A b 
+STA A N 0 62
+LDI A c
+STA A N 0 63
+LDI A d 
+STA A N 0 64
+LDI A e 
+STA A N 0 65
+LDI A f 
+STA A N 0 66
+RSR
+
+SEG 0 ADDRESS 222 ;shift loop subroutine 
+;register X = for loop perameter
+;register Y = value to be shifted 
+LDI Z 1
+SUB X Z X 
+LSHIFT Y Y
+JUMPIFNZ 223
+SETF 8 ;reset zero flag 
+RSR 

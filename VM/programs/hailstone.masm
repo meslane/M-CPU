@@ -1,0 +1,216 @@
+SEG 0 ADDRESS 0
+GOTO 64
+
+SEG 0 ADDRESS 64
+LSP ffff ;set stack 
+LSG MS f ;set memory segment to 15
+LDI C 4
+LDI D 1
+STA C N 0 3f ;set ouput enable
+GSR 1200 ;setup deconstruction array
+GSR aaa ;setup output array 
+GOTO 1f
+
+SEG 0 ADDRESS 8
+LDA A N 0 ff ;get keyboard input
+STA A N 0 40 ;echo input 
+PUSH A ;push A to the stack 
+SUB C D C 
+JUMPIFZ 1300
+SETF a ;reset interrupt flag
+RSR 
+
+SEG 0 ADDRESS 1f 
+GOTO 1f 
+
+SEG 0 ADDRESS 1300 ;loading A 
+SETF 8 ;reset zero flag 
+POP E 
+POP D
+POP C 
+POP B
+LDA B B 1 0
+LDA C C 1 0
+LDA D D 1 0
+LDA E E 1 0
+MOV B Y ;first value to shift 
+LDI X c
+GSR a222
+MOV Y B ;restore 
+MOV C Y ;second value to shift 
+LDI X 8
+GSR a222
+MOV Y C ;restore
+MOV D Y ;third value to shift 
+LDI X 4
+GSR a222
+MOV Y D ;restore
+OR B C B
+OR D E D
+OR B D A ;or values together 
+GOTO fa
+
+SEG 0 ADDRESS a222 ;shift loop subroutine 
+;register X = for loop perameter
+;register Y = value to be shifted 
+LDI Z 1
+SUB X Z X 
+LSHIFT Y Y
+JUMPIFNZ a223
+SETF 8 ;reset zero flag 
+RSR 
+
+SEG 0 ADDRESS 1200 ;input deconstruction array
+LDI A 0
+STA A N 0 30
+LDI A 1
+STA A N 0 31 
+LDI A 2
+STA A N 0 32
+LDI A 3
+STA A N 0 33
+LDI A 4
+STA A N 0 34
+LDI A 5
+STA A N 0 35
+LDI A 6
+STA A N 0 36
+LDI A 7
+STA A N 0 37
+LDI A 8
+STA A N 0 38
+LDI A 9
+STA A N 0 39
+LDI A a 
+STA A N 0 61
+LDI A b 
+STA A N 0 62
+LDI A c
+STA A N 0 63
+LDI A d 
+STA A N 0 64
+LDI A e 
+STA A N 0 65
+LDI A f 
+STA A N 0 66
+RSR
+
+SEG 0 ADDRESS fa ;print newline twice
+LDI B a
+STA B N 0 40 
+STA B N 0 40
+SETF 0 ;reset flags 
+
+SEG 0 ADDRESS ff
+MOV A D ;test if one or not 
+LDI B 1 
+SUB D B D 
+JUMPIFZ 1cc
+GSR fff ;print value 
+ADD A C A ;add to zero to determine parity 
+JUMPIFP 1aa ;goto multiply by three and add one if number is odd 
+JUMPIFNP 1bb ;goto divide by two if number is even 
+
+SEG 0 ADDRESS 1aa
+MOV A B ;save a 
+ADD A A A ;*2
+ADD A B A ;*3 
+LDI B 1 
+ADD A B A ;add one 
+GOTO 101 
+
+SEG 0 ADDRESS 1bb
+RSHIFT A A ;rightshift one (same as divide by two)
+GOTO 101 
+
+SEG 0 ADDRESS 1cc
+HALT 
+
+SEG 0 ADDRESS aaa ;char array setup subroutine 
+LDI A 30 
+STA A N 0 0 
+LDI A 31 
+STA A N 0 1
+LDI A 32 
+STA A N 0 2
+LDI A 33 
+STA A N 0 3
+LDI A 34 
+STA A N 0 4
+LDI A 35 
+STA A N 0 5
+LDI A 36 
+STA A N 0 6
+LDI A 37 
+STA A N 0 7
+LDI A 38 
+STA A N 0 8
+LDI A 39 
+STA A N 0 9
+LDI A 41 
+STA A N 0 a
+LDI A 42 
+STA A N 0 b
+LDI A 43 
+STA A N 0 c
+LDI A 44 
+STA A N 0 d
+LDI A 45 
+STA A N 0 e
+LDI A 46 
+STA A N 0 f               
+RSR
+
+SEG 0 ADDRESS bbb ;masking loop subroutine 
+;register B = for loop perameter
+;register A = value to be shifted 
+LDI C 1
+SUB B C B 
+RSHIFT A A
+JUMPIFNZ bbc
+LDI B f
+AND A B A ;mask to 4 bits 
+SETF 8 ;reset zero flag to zero 
+RSR 
+
+SEG 0 ADDRESS fff ;printing subroutine  
+PUSH A
+PUSH A
+MOV A D
+LDI B c ;first for loop 
+GSR bbb
+MOV A E ;store first nibble 
+POP A ;restore A
+PUSH A ;save A 
+LDI B 8 ;second for loop
+GSR bbb
+MOV A X ;store second nibble 
+POP A ;restore A
+PUSH A ;save A 
+LDI B 4 ;third for loop
+GSR bbb 
+MOV A Y ;store third nibble
+POP A ;restore A
+MOV A Z
+LDI B f
+AND Z B Z ;mask Z
+LDA E E 1 0 ;load registers with array char value 
+LDA X X 1 0
+LDA Y Y 1 0
+LDA Z Z 1 0
+STA E N 0 3f ;output enable 
+STA E N 0 40 ;output 
+STA X N 0 40
+STA Y N 0 40 
+STA Z N 0 40
+LDI Z a
+STA Z N 0 40
+LDI B 0
+LDI C 0  
+LDI E 0 
+LDI X 0
+LDI Y 0
+LDI Z 0 ;clear everything that was used 
+POP A
+SETF 0 ;clear all flags  
+RSR 
