@@ -1,19 +1,15 @@
-SEG 0 ADDRESS 0 
+SEG 0 ADDRESS 0
 LSP ffff
-LSG MS f ;set MS to output segment 
-GSR aaa ;setup output array 
-GOTO ff ;do main loop 
-
-SEG 0 ADDRESS 8
-RSR
+LSG MS f
+GSR aaa
+GOTO ff
 
 SEG 0 ADDRESS ff
+LDI B 1
 LDI A 1
 GSR fff
-MOV C B
-MOV A C 
-ADD A B A 
-JUMPIFNC 100
+ADD A B A
+JUMPIFNC 101 
 HALT
 
 SEG 0 ADDRESS aaa ;char array setup subroutine 
@@ -66,7 +62,14 @@ RSR
 SEG 0 ADDRESS fff ;printing subroutine 
 PUSH A
 PUSH B
-PUSH C ;save state 
+PUSH C ;save state
+LDI B 0
+LDI C 0
+LDI D 0
+LDI E 0
+LDI X 0
+LDI Y 0
+LDI Z 0 
 PUSH A ;save A 
 LDI B c ;first for loop 
 GSR bbb
@@ -99,5 +102,5 @@ STA Z N 0 40
 POP C
 POP B
 POP A
-SETF 8
+SETF 8 
 RSR 
