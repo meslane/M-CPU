@@ -10,40 +10,40 @@ unsigned char error(unsigned char errnum)
     switch (errnum) {
         case 0: //no error
             break;
-        case 1: //invalid subop
-            printf("ERROR FATAL: subop is not in defined range\n");
+        case 1: //invalid vector
+            printf("\nERROR FATAL: interrupt vector is out of range\n");
             exit(1);
             break;
         case 2: //invalid register number
-            printf("ERROR FATAL: designated register does not exist\n");
+            printf("\nERROR FATAL: designated register does not exist\n");
             exit(1);
             break;
         case 3: //store into ROM
-            printf("ERROR FATAL: attempt to write into ROM segment\n");
+            printf("\nERROR FATAL: attempt to write into ROM segment\n");
             exit(1);
             break;
         case 4: //push SP onto stack
-            printf("ERROR FATAL: cannot push SP onto stack\n");
+            printf("\nERROR FATAL: cannot push SP onto stack\n");
             exit(1);
             break;
         case 5: //pop into SP
-            printf("ERROR FATAL: cannot pop stack value into SP\n");
+            printf("\nERROR FATAL: cannot pop stack value into SP\n");
             exit(1);
             break;
         case 6: //segment out of range 
-            printf("ERROR FATAL: nonexistent segment\n");
+            printf("\nERROR FATAL: nonexistent segment\n");
             exit(1);
         case 7: //call stack overflow
-            printf("ERROR FATAL: too many subroutine calls\n");
+            printf("\nERROR FATAL: too many subroutine calls\n");
             exit(1);
         case 8: //call stack underflow
-            printf("ERROR FATAL: return without matching subroutine call\n");
+            printf("\nERROR FATAL: return without matching subroutine call\n");
             exit(1);
         case 9: //stack undererflow
-            printf("ERROR FATAL: stack underflow\n");
+            printf("\nERROR FATAL: stack underflow\n");
             exit(1);
         case 10: //stack overflow
-            printf("ERROR FATAL: stack overflow\n");
+            printf("\nERROR FATAL: stack overflow\n");
             exit(1);
     }
     return errnum;

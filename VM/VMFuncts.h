@@ -168,15 +168,12 @@ word ALU(byte r1, byte r2, byte r3, char operation) //r3 = subop
             result = registers[r1] - registers[r2];
             break;
         case AND:
-            (halfword)result;
             result = registers[r1] & registers[r2];
             break;
         case OR:
-            (halfword)result;
             result = registers[r1] | registers[r2];
             break;
         case XOR: 
-            (halfword)result;
             result = registers[r1] ^ registers[r2];
             break;
         case LSHIFT:
