@@ -16,10 +16,9 @@ void reader(char file[BUFSIZ])
     char segment;
     unsigned short address;
     
-    char amode;
     readState mode = ROMINSERT;
     while(1) { //file reading
-        char scanReturn = fscanf(fp, "%x%*[^\n]\n", &data); //read as hex ints and ignore everything else but \n
+        int scanReturn = fscanf(fp, "%x%*[^\n]\n", &data); //read as hex ints and ignore everything else but \n
         
         if (scanReturn == EOF) return; //break from loop if EOF
         

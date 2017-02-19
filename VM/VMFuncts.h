@@ -1,6 +1,9 @@
 #include "read.h"
 #include "VMerror.h"
 
+#define MIN 0
+#define MAX 65535
+
 word jump(halfword address) 
 {
     PC = address;
@@ -123,14 +126,14 @@ void move(byte src, byte dest) //MOV (move r1 to r2)
 void interrupt(byte line)
 {
     if (flags.I == 0) {
-        flags.I = 1; //prevent other interrupts from being called while servicing current one (must be set to 0 in code)
-        word vector[] = {8, 16, 24, 32, 40, 48, 56, 64}; 
+        flags.I = 1; //prevent other interrupts from being called while servicing current one (must be set to 0 in code) 
         RP--; //save PC state 
         RETURN[RP] = PC;
         if (RP < 0) {
             error(7);
         }
         if (line < 9){ //if line is valid: go to designated vector
+            word vector[] = {8, 16, 24, 32, 40, 48, 56, 64};
             jump(vector[line]);
         }
         else {
@@ -141,7 +144,7 @@ void interrupt(byte line)
 
 void push(byte r1) 
 {
-    if (SP == 0){
+    if (SP == MIN){
         error(10); //test for stack overflow
     }
     SP--; //increase stack size to make room for new entry
@@ -150,7 +153,7 @@ void push(byte r1)
 
 void pop(byte r1)
 {
-    if (SP == 65535){
+    if (SP == MAX){
         error(9); //test for stack underflow
     }
     registers[r1] = memory[segment.SS][SP]; //pop top stack entry into given register
@@ -190,10 +193,10 @@ word ALU(byte r1, byte r2, byte r3, char operation) //r3 = subop
             break;
     }
     
-    if (result > 65535) {
+    if (result > MAX) {
         flags.C = 1; //set carry flag if number is too big for 16 bits
     }
-    if (result < 0) {
+    if (result < MIN) {
         flags.N = 1; //set negative flag if number is less than zero 
     }
     if (result == 0) {

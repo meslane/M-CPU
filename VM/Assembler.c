@@ -70,7 +70,7 @@ char getReg(char fileInput, unsigned long line) //take ascii char and return fil
         out = 0;
     }
     else {
-        printf("SYNTAX ERROR: Invalid Register, instruction %d Given Value: %c\n", line, fileInput);
+        printf("SYNTAX ERROR: Invalid Register, instruction %lu Given Value: %c\n", line, fileInput);
         exit(1);
     }
     return out;
@@ -92,7 +92,7 @@ char getSr(char fileInput[2], unsigned long line)
 void testSubop(unsigned int subop, unsigned long line) 
 {
     if (subop > 2) {
-        printf("SYNTAX ERROR: Invalid Subop, instruction %d\n", line);
+        printf("SYNTAX ERROR: Invalid Subop, instruction %lu\n", line);
         exit(1);
     }   
 }
@@ -105,33 +105,27 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
     inF = fopen(inputFile, "r");
     outF = fopen(outputFile, "w");
     
-    char temp[20];
-    char segR[2];
-    char opcode;
-    char r1;
-    char r2;
-    char r3;
-    unsigned int subop; //cast to char after reading 
-    unsigned int immediate; //cast to unsigned short after reading 
-    unsigned int output;
     unsigned long line = 1;
     
-    while(1) { 
-        char opcode = 0, r1 = 0, r2 = 0, r3 = 0; //set read values to zero just in case 
-        unsigned int subop = 0, immediate = 0, output = 0;
+    char segR[BUFSIZ];
+    char temp[BUFSIZ];
+   
+   while(1) { 
         segR[0] = '\0';
         temp[0] = '\0';
         
-        char scanReturn = fscanf(inF, "%s",&temp); //analyse first string and branch into if statement 
+        int scanReturn = fscanf(inF, "%5120s",&temp); //analyse first string and branch into if statement 
         if (scanReturn != EOF) { 
-            //printf("%s\n", temp);
+            char opcode = 0, r1 = 0, r2 = 0, r3 = 0; //set read values to zero just in case 
+            unsigned int subop = 0, immediate = 0, output = 0;
+        
             if (strcmp(temp, "SEG") == 0 || strcmp(temp, "seg") == 0) { //addressing
-                int seg;
+                unsigned int seg;
                 char stringTemp[20];
-                int address;
-                fscanf(inF, " %x %s %x%*[^\n]\n", &seg, &stringTemp, &address);
+                unsigned int address;
+                fscanf(inF, " %x %5120s %x%*[^\n]\n", &seg, &stringTemp, &address);
                 if (strcmp(stringTemp, "ADDRESS") != 0 && strcmp(stringTemp, "address") != 0) {
-                    printf("SYNTAX ERROR: instruction %d\n", line);
+                    printf("SYNTAX ERROR: instruction %lu\n", line);
                     exit(1);
                 }
                 output = (seg << 16)|address;
@@ -346,7 +340,7 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
             }
             else if (strcmp(temp, "LSG") == 0 || strcmp(temp, "lsg") == 0) {
                 opcode = LSG; //opcode 29
-                fscanf(inF, " %s %x%*[^\n]\n", &segR, &immediate);
+                fscanf(inF, " %5120s %x%*[^\n]\n", &segR, &immediate);
                 subop = getSr(segR, line);
                 testSubop(subop, line);
                 output = (opcode << 27)|(r1 << 24)|(r2 << 21)|(subop << 16)|(immediate);
@@ -362,7 +356,7 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
                 opcode = SETF;
                 fscanf(inF, " %x%*[^\n]\n", &subop);
                 if (subop > 11) {
-                    printf("SYNTAX ERROR: Invalid Flag Set, instruction %d\n", line);
+                    printf("SYNTAX ERROR: Invalid Flag Set, instruction %lu\n", line);
                     exit(1);
                 }
                 output = (opcode << 27)|(r1 << 24)|(r2 << 21)|(subop << 16)|(immediate);

@@ -1,8 +1,5 @@
 #include "VMFuncts.h"
 
-#define MAX 65535
-#define MIN 0
-
 void fetch(void)
 {
     IR = memory[segment.RS][PC++]; //get word at PC location
@@ -153,19 +150,16 @@ void prexec(void)
 void postexec(void)
 {
     printf("VM safely halted at PC HEX:%x DEC:%i\n", PC-1, PC-1);
-    printf("A:%x B:%x C:%x D:%x E:%x X:%x Y:%x Z:%x SP:%x RP:%x RS:%x MS:%x SS:%x C:%x N:%x Z:%x P:%x I:%x Cycles:%x\n",registers[0],registers[1],registers[2],registers[3],registers[4],registers[5],registers[6],registers[7], SP, RP, segment.RS, segment.MS, segment.SS, flags.C, flags.N, flags.Z, flags.P, flags.I, cycles);
-    printf("A:%i B:%i C:%i D:%i E:%i X:%i Y:%i Z:%i SP:%i RP:%i RS:%i MS:%i SS:%i C:%i N:%i Z:%i P:%i I:%i Cycles:%i\n",registers[0],registers[1],registers[2],registers[3],registers[4],registers[5],registers[6],registers[7], SP, RP, segment.RS, segment.MS, segment.SS, flags.C, flags.N, flags.Z, flags.P, flags.I, cycles);
+    printf("A:%x B:%x C:%x D:%x E:%x X:%x Y:%x Z:%x SP:%x RP:%x RS:%x MS:%x SS:%x C:%x N:%x Z:%x P:%x I:%x Cycles:%lx\n",registers[0],registers[1],registers[2],registers[3],registers[4],registers[5],registers[6],registers[7], SP, RP, segment.RS, segment.MS, segment.SS, flags.C, flags.N, flags.Z, flags.P, flags.I, cycles);
+    printf("A:%i B:%i C:%i D:%i E:%i X:%i Y:%i Z:%i SP:%i RP:%i RS:%i MS:%i SS:%i C:%i N:%i Z:%i P:%i I:%i Cycles:%lu\n",registers[0],registers[1],registers[2],registers[3],registers[4],registers[5],registers[6],registers[7], SP, RP, segment.RS, segment.MS, segment.SS, flags.C, flags.N, flags.Z, flags.P, flags.I, cycles);
 }
 
 char testKeyboard(void)
 {
-    unsigned short keypress;
-    unsigned short keypressB;
-    char alt = 0;
     if (kbhit() && flags.I == 0){ //if key is pressed and interrupt is not being serviced 
+        unsigned short keypress;
         keypress = _getch(); //record keypress
         if (keypress == 0 || keypress == 224) {
-            alt = 1;
             keypress = _getch();
         }
         if (keypress == 10) {
