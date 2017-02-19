@@ -220,13 +220,13 @@ LC12:
 LC13:
 	.ascii "w\0"
 LC14:
-	.ascii "%5120s\0"
+	.ascii "%16s\0"
 LC15:
 	.ascii "SEG\0"
 LC16:
 	.ascii "seg\0"
 LC17:
-	.ascii " %x %5120s %x%*[^\12]\12\0"
+	.ascii " %x %16s %x%*[^\12]\12\0"
 LC18:
 	.ascii "ADDRESS\0"
 LC19:
@@ -369,7 +369,7 @@ LC86:
 LC87:
 	.ascii "lsg\0"
 LC88:
-	.ascii " %5120s %x%*[^\12]\12\0"
+	.ascii " %16s %x%*[^\12]\12\0"
 LC89:
 	.ascii "LSP\0"
 LC90:

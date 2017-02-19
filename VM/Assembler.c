@@ -114,7 +114,7 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
         segR[0] = '\0';
         temp[0] = '\0';
         
-        int scanReturn = fscanf(inF, "%5120s",&temp); //analyse first string and branch into if statement 
+        int scanReturn = fscanf(inF, "%16s",&temp); //analyse first string and branch into if statement 
         if (scanReturn != EOF) { 
             char opcode = 0, r1 = 0, r2 = 0, r3 = 0; //set read values to zero just in case 
             unsigned int subop = 0, immediate = 0, output = 0;
@@ -123,7 +123,7 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
                 unsigned int seg;
                 char stringTemp[20];
                 unsigned int address;
-                fscanf(inF, " %x %5120s %x%*[^\n]\n", &seg, &stringTemp, &address);
+                fscanf(inF, " %x %16s %x%*[^\n]\n", &seg, &stringTemp, &address);
                 if (strcmp(stringTemp, "ADDRESS") != 0 && strcmp(stringTemp, "address") != 0) {
                     printf("SYNTAX ERROR: instruction %lu\n", line);
                     exit(1);
@@ -340,7 +340,7 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
             }
             else if (strcmp(temp, "LSG") == 0 || strcmp(temp, "lsg") == 0) {
                 opcode = LSG; //opcode 29
-                fscanf(inF, " %5120s %x%*[^\n]\n", &segR, &immediate);
+                fscanf(inF, " %16s %x%*[^\n]\n", &segR, &immediate);
                 subop = getSr(segR, line);
                 testSubop(subop, line);
                 output = (opcode << 27)|(r1 << 24)|(r2 << 21)|(subop << 16)|(immediate);
