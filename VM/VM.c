@@ -129,7 +129,7 @@ void execute(void)
 
 void run(char interruptStatus)
 {
-    if (interruptStatus == 0) {
+    if (interruptStatus == 0 || flags.I == 1) {
         fetch(); 
         decode();
         execute();  
@@ -139,10 +139,9 @@ void run(char interruptStatus)
     }
 }
 
-void prexec(void)
+void prexec(void) //set segment pointers to start values
 {
-    //set segment pointers to start values
-    segment.RS = 0;
+    segment.RS = 0; 
     segment.MS = 9;
     segment.SS = 8;
 }
@@ -156,7 +155,7 @@ void postexec(void)
 
 char testKeyboard(void)
 {
-    if (kbhit() && flags.I == 0){ //if key is pressed and interrupt is not being serviced 
+    if (kbhit()) { //if key is pressed
         unsigned short keypress;
         keypress = _getch(); //record keypress
         if (keypress == 0 || keypress == 224) {
@@ -202,7 +201,6 @@ int main(int argc, char *argv[])
         run(testKeyboard());
         display();
         cycles++;
-        //printf("PC%i: %i, %i, %i, %i, %i\n", PC-1, wordSeg.opcode, wordSeg.r1, wordSeg.r2, wordSeg.subop, wordSeg.immediate);
     } while(halt == 0);
     printf("\n============================\n");
     postexec();

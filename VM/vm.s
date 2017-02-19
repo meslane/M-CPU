@@ -1,16 +1,61 @@
 	.file	"vm.c"
+	.section	.text.unlikely,"x"
+LCOLDB0:
+	.text
+LHOTB0:
+	.p2align 4,,15
+	.def	_testKeyboard.part.3;	.scl	3;	.type	32;	.endef
+_testKeyboard.part.3:
+LFB59:
+	.cfi_startproc
+	subl	$12, %esp
+	.cfi_def_cfa_offset 16
+	call	__getch
+	testw	%ax, %ax
+	je	L6
+	cmpw	$224, %ax
+	movzwl	%ax, %edx
+	je	L6
+	cmpw	$10, %dx
+	je	L12
+L4:
+	movl	%edx, _memory+3933180
+	movl	$1, %eax
+	addl	$12, %esp
+	.cfi_remember_state
+	.cfi_def_cfa_offset 4
+	ret
+	.p2align 4,,10
+L6:
+	.cfi_restore_state
+	call	__getch
+	movzwl	%ax, %edx
+	cmpw	$10, %dx
+	jne	L4
+L12:
+	movl	$10, _memory+3933180
+	movl	$1, %eax
+	addl	$12, %esp
+	.cfi_def_cfa_offset 4
+	ret
+	.cfi_endproc
+LFE59:
+	.section	.text.unlikely,"x"
+LCOLDE0:
+	.text
+LHOTE0:
 	.section .rdata,"dr"
-LC0:
+LC1:
 	.ascii "r\0"
 	.align 4
-LC1:
-	.ascii "ERROR FATAL: ROM file not found in current directory\0"
 LC2:
+	.ascii "ERROR FATAL: ROM file not found in current directory\0"
+LC3:
 	.ascii "%x%*[^\12]\12\0"
 	.section	.text.unlikely,"x"
-LCOLDB3:
+LCOLDB4:
 	.text
-LHOTB3:
+LHOTB4:
 	.p2align 4,,15
 	.globl	_reader
 	.def	_reader;	.scl	2;	.type	32;	.endef
@@ -32,56 +77,56 @@ LFB29:
 	subl	$60, %esp
 	.cfi_def_cfa_offset 80
 	movl	80(%esp), %eax
-	movl	$LC0, 4(%esp)
+	movl	$LC1, 4(%esp)
 	movl	%eax, (%esp)
 	call	_fopen
 	testl	%eax, %eax
-	je	L2
+	je	L14
 	leal	44(%esp), %ebp
 	movl	%eax, %esi
 	xorl	%ebx, %ebx
 	.p2align 4,,10
-L3:
+L15:
 	movl	%ebp, 8(%esp)
-	movl	$LC2, 4(%esp)
+	movl	$LC3, 4(%esp)
 	movl	%esi, (%esp)
 	call	_fscanf
 	cmpl	$-1, %eax
-	je	L1
+	je	L13
 	testl	%ebx, %ebx
-	jne	L5
+	jne	L17
 	movl	44(%esp), %ecx
 	cmpl	$1028015, %ecx
-	je	L10
+	je	L22
 	movsbl	16(%esp), %eax
 	movzwl	%di, %edx
 	addl	$1, %edi
 	sall	$16, %eax
 	addl	%edx, %eax
 	movl	%ecx, _memory(,%eax,4)
-	jmp	L3
+	jmp	L15
 	.p2align 4,,10
-L5:
+L17:
 	movl	44(%esp), %eax
 	cmpl	$719610, %eax
 	setne	%dl
 	cmpl	$1028015, %eax
 	movzbl	%dl, %ebx
-	je	L3
+	je	L15
 	testb	%dl, %dl
-	je	L3
+	je	L15
 	movl	%eax, %edi
 	movl	$1, %ebx
 	shrl	$16, %edi
 	movl	%edi, 16(%esp)
 	movl	%eax, %edi
-	jmp	L3
+	jmp	L15
 	.p2align 4,,10
-L10:
+L22:
 	movl	$1, %ebx
-	jmp	L3
+	jmp	L15
 	.p2align 4,,10
-L1:
+L13:
 	addl	$60, %esp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 20
@@ -98,51 +143,51 @@ L1:
 	.cfi_restore 5
 	.cfi_def_cfa_offset 4
 	ret
-L2:
+L14:
 	.cfi_restore_state
-	movl	$LC1, (%esp)
+	movl	$LC2, (%esp)
 	call	_puts
 	movl	$1, (%esp)
 	call	_exit
 	.cfi_endproc
 LFE29:
 	.section	.text.unlikely,"x"
-LCOLDE3:
+LCOLDE4:
 	.text
-LHOTE3:
+LHOTE4:
 	.section .rdata,"dr"
 	.align 4
-LC4:
+LC5:
 	.ascii "\12ERROR FATAL: interrupt vector is out of range\0"
 	.align 4
-LC5:
+LC6:
 	.ascii "\12ERROR FATAL: designated register does not exist\0"
 	.align 4
-LC6:
+LC7:
 	.ascii "\12ERROR FATAL: attempt to write into ROM segment\0"
 	.align 4
-LC7:
+LC8:
 	.ascii "\12ERROR FATAL: cannot push SP onto stack\0"
 	.align 4
-LC8:
+LC9:
 	.ascii "\12ERROR FATAL: cannot pop stack value into SP\0"
 	.align 4
-LC9:
+LC10:
 	.ascii "\12ERROR FATAL: nonexistent segment\0"
 	.align 4
-LC10:
+LC11:
 	.ascii "\12ERROR FATAL: too many subroutine calls\0"
 	.align 4
-LC11:
-	.ascii "\12ERROR FATAL: return without matching subroutine call\0"
 LC12:
-	.ascii "\12ERROR FATAL: stack underflow\0"
+	.ascii "\12ERROR FATAL: return without matching subroutine call\0"
 LC13:
+	.ascii "\12ERROR FATAL: stack underflow\0"
+LC14:
 	.ascii "\12ERROR FATAL: stack overflow\0"
 	.section	.text.unlikely,"x"
-LCOLDB14:
+LCOLDB15:
 	.text
-LHOTB14:
+LHOTB15:
 	.p2align 4,,15
 	.globl	_error
 	.def	_error;	.scl	2;	.type	32;	.endef
@@ -153,99 +198,99 @@ LFB30:
 	.cfi_def_cfa_offset 32
 	movl	32(%esp), %eax
 	cmpb	$10, %al
-	ja	L17
+	ja	L28
 	movzbl	%al, %edx
-	jmp	*L19(,%edx,4)
+	jmp	*L30(,%edx,4)
 	.section .rdata,"dr"
 	.align 4
-L19:
-	.long	L17
-	.long	L18
-	.long	L20
-	.long	L21
-	.long	L22
-	.long	L23
-	.long	L24
-	.long	L25
-	.long	L26
-	.long	L27
+L30:
 	.long	L28
+	.long	L29
+	.long	L31
+	.long	L32
+	.long	L33
+	.long	L34
+	.long	L35
+	.long	L36
+	.long	L37
+	.long	L38
+	.long	L39
 	.text
 	.p2align 4,,10
-L27:
+L38:
+	movl	$LC13, (%esp)
+	call	_puts
+	movl	$1, (%esp)
+	call	_exit
+	.p2align 4,,10
+L39:
+	movl	$LC14, (%esp)
+	call	_puts
+	movl	$1, (%esp)
+	call	_exit
+	.p2align 4,,10
+L29:
+	movl	$LC5, (%esp)
+	call	_puts
+	movl	$1, (%esp)
+	call	_exit
+	.p2align 4,,10
+L31:
+	movl	$LC6, (%esp)
+	call	_puts
+	movl	$1, (%esp)
+	call	_exit
+	.p2align 4,,10
+L32:
+	movl	$LC7, (%esp)
+	call	_puts
+	movl	$1, (%esp)
+	call	_exit
+	.p2align 4,,10
+L33:
+	movl	$LC8, (%esp)
+	call	_puts
+	movl	$1, (%esp)
+	call	_exit
+	.p2align 4,,10
+L34:
+	movl	$LC9, (%esp)
+	call	_puts
+	movl	$1, (%esp)
+	call	_exit
+	.p2align 4,,10
+L35:
+	movl	$LC10, (%esp)
+	call	_puts
+	movl	$1, (%esp)
+	call	_exit
+	.p2align 4,,10
+L36:
+	movl	$LC11, (%esp)
+	call	_puts
+	movl	$1, (%esp)
+	call	_exit
+	.p2align 4,,10
+L37:
 	movl	$LC12, (%esp)
 	call	_puts
 	movl	$1, (%esp)
 	call	_exit
 	.p2align 4,,10
 L28:
-	movl	$LC13, (%esp)
-	call	_puts
-	movl	$1, (%esp)
-	call	_exit
-	.p2align 4,,10
-L18:
-	movl	$LC4, (%esp)
-	call	_puts
-	movl	$1, (%esp)
-	call	_exit
-	.p2align 4,,10
-L20:
-	movl	$LC5, (%esp)
-	call	_puts
-	movl	$1, (%esp)
-	call	_exit
-	.p2align 4,,10
-L21:
-	movl	$LC6, (%esp)
-	call	_puts
-	movl	$1, (%esp)
-	call	_exit
-	.p2align 4,,10
-L22:
-	movl	$LC7, (%esp)
-	call	_puts
-	movl	$1, (%esp)
-	call	_exit
-	.p2align 4,,10
-L23:
-	movl	$LC8, (%esp)
-	call	_puts
-	movl	$1, (%esp)
-	call	_exit
-	.p2align 4,,10
-L24:
-	movl	$LC9, (%esp)
-	call	_puts
-	movl	$1, (%esp)
-	call	_exit
-	.p2align 4,,10
-L25:
-	movl	$LC10, (%esp)
-	call	_puts
-	movl	$1, (%esp)
-	call	_exit
-	.p2align 4,,10
-L26:
-	movl	$LC11, (%esp)
-	call	_puts
-	movl	$1, (%esp)
-	call	_exit
-	.p2align 4,,10
-L17:
 	addl	$28, %esp
 	.cfi_def_cfa_offset 4
 	ret
 	.cfi_endproc
 LFE30:
 	.section	.text.unlikely,"x"
-LCOLDE14:
+LCOLDE15:
 	.text
-LHOTE14:
+LHOTE15:
 	.section	.text.unlikely,"x"
-LCOLDB15:
+LCOLDB16:
 	.text
-LHOTB15:
+LHOTB16:
 	.p2align 4,,15
 	.globl	_jump
 	.def	_jump;	.scl	2;	.type	32;	.endef
@@ -259,13 +304,13 @@ LFB31:
 	.cfi_endproc
 LFE31:
 	.section	.text.unlikely,"x"
-LCOLDE15:
+LCOLDE16:
 	.text
-LHOTE15:
+LHOTE16:
 	.section	.text.unlikely,"x"
-LCOLDB16:
+LCOLDB17:
 	.text
-LHOTB16:
+LHOTB17:
 	.p2align 4,,15
 	.globl	_loadReg
 	.def	_loadReg;	.scl	2;	.type	32;	.endef
@@ -279,13 +324,13 @@ LFB32:
 	.cfi_endproc
 LFE32:
 	.section	.text.unlikely,"x"
-LCOLDE16:
+LCOLDE17:
 	.text
-LHOTE16:
+LHOTE17:
 	.section	.text.unlikely,"x"
-LCOLDB17:
+LCOLDB18:
 	.text
-LHOTB17:
+LHOTB18:
 	.p2align 4,,15
 	.globl	_loadA
 	.def	_loadA;	.scl	2;	.type	32;	.endef
@@ -306,10 +351,10 @@ LFB33:
 	movl	20(%esp), %ebx
 	movl	28(%esp), %eax
 	cmpb	$1, %cl
-	je	L34
-	jb	L35
+	je	L45
+	jb	L46
 	cmpb	$2, %cl
-	jne	L32
+	jne	L43
 	movzbl	%bl, %ebx
 	movzbl	_segment+1, %esi
 	movzbl	%dl, %ecx
@@ -320,7 +365,7 @@ LFB33:
 	addl	%esi, %eax
 	movl	_memory(,%eax,4), %eax
 	movw	%ax, _registers(%ecx,%ecx)
-L32:
+L43:
 	popl	%ebx
 	.cfi_remember_state
 	.cfi_restore 3
@@ -333,7 +378,7 @@ L32:
 	.cfi_def_cfa_offset 4
 	ret
 	.p2align 4,,10
-L35:
+L46:
 	.cfi_restore_state
 	movzbl	_segment+1, %ebx
 	movzwl	%ax, %ecx
@@ -355,7 +400,7 @@ L35:
 	.cfi_def_cfa_offset 4
 	ret
 	.p2align 4,,10
-L34:
+L45:
 	.cfi_restore_state
 	movzbl	%bl, %ebx
 	movzbl	_segment+1, %eax
@@ -378,13 +423,13 @@ L34:
 	.cfi_endproc
 LFE33:
 	.section	.text.unlikely,"x"
-LCOLDE17:
+LCOLDE18:
 	.text
-LHOTE17:
+LHOTE18:
 	.section	.text.unlikely,"x"
-LCOLDB18:
+LCOLDB19:
 	.text
-LHOTB18:
+LHOTB19:
 	.p2align 4,,15
 	.globl	_storeA
 	.def	_storeA;	.scl	2;	.type	32;	.endef
@@ -402,10 +447,10 @@ LFB34:
 	movl	16(%esp), %edx
 	movl	24(%esp), %eax
 	cmpb	$1, %bl
-	je	L40
-	jb	L41
+	je	L51
+	jb	L52
 	cmpb	$2, %bl
-	jne	L38
+	jne	L49
 	movzbl	%dl, %edx
 	movzbl	_segment+1, %ebx
 	movzbl	%cl, %ecx
@@ -416,7 +461,7 @@ LFB34:
 	movzwl	_registers(%ecx,%ecx), %edx
 	addl	%ebx, %eax
 	movl	%edx, _memory(,%eax,4)
-L38:
+L49:
 	popl	%ebx
 	.cfi_remember_state
 	.cfi_restore 3
@@ -426,12 +471,12 @@ L38:
 	.cfi_def_cfa_offset 4
 	ret
 	.p2align 4,,10
-L41:
+L52:
 	.cfi_restore_state
 	movzbl	_segment+1, %ebx
 	movzwl	%ax, %edx
 	movl	%ebx, %eax
-L44:
+L55:
 	sall	$16, %eax
 	movzbl	%cl, %ecx
 	addl	%edx, %eax
@@ -446,22 +491,22 @@ L44:
 	movl	%edx, _memory(,%eax,4)
 	ret
 	.p2align 4,,10
-L40:
+L51:
 	.cfi_restore_state
 	movzbl	%dl, %edx
 	movzbl	_segment+1, %eax
 	movzwl	_registers(%edx,%edx), %edx
-	jmp	L44
+	jmp	L55
 	.cfi_endproc
 LFE34:
 	.section	.text.unlikely,"x"
-LCOLDE18:
+LCOLDE19:
 	.text
-LHOTE18:
+LHOTE19:
 	.section	.text.unlikely,"x"
-LCOLDB19:
+LCOLDB20:
 	.text
-LHOTB19:
+LHOTB20:
 	.p2align 4,,15
 	.globl	_gotoA
 	.def	_gotoA;	.scl	2;	.type	32;	.endef
@@ -474,13 +519,13 @@ LFB35:
 	.cfi_endproc
 LFE35:
 	.section	.text.unlikely,"x"
-LCOLDE19:
+LCOLDE20:
 	.text
-LHOTE19:
+LHOTE20:
 	.section	.text.unlikely,"x"
-LCOLDB20:
+LCOLDB21:
 	.text
-LHOTB20:
+LHOTB21:
 	.p2align 4,,15
 	.globl	_jumpif
 	.def	_jumpif;	.scl	2;	.type	32;	.endef
@@ -490,74 +535,74 @@ LFB36:
 	movl	8(%esp), %eax
 	movl	4(%esp), %edx
 	cmpb	$7, %al
-	ja	L46
+	ja	L57
 	movzbl	%al, %eax
-	jmp	*L49(,%eax,4)
+	jmp	*L60(,%eax,4)
 	.section .rdata,"dr"
 	.align 4
-L49:
-	.long	L48
-	.long	L50
-	.long	L51
-	.long	L52
-	.long	L53
-	.long	L54
-	.long	L55
-	.long	L56
+L60:
+	.long	L59
+	.long	L61
+	.long	L62
+	.long	L63
+	.long	L64
+	.long	L65
+	.long	L66
+	.long	L67
 	.text
 	.p2align 4,,10
-L48:
+L59:
 	cmpb	$0, _flags
-	jne	L57
-L46:
-	rep ret
-	.p2align 4,,10
-L55:
-	cmpb	$0, _flags+3
-	jne	L57
-	rep ret
-	.p2align 4,,10
-L56:
-	cmpb	$0, _flags+3
-	jne	L46
+	jne	L68
 L57:
+	rep ret
+	.p2align 4,,10
+L66:
+	cmpb	$0, _flags+3
+	jne	L68
+	rep ret
+	.p2align 4,,10
+L67:
+	cmpb	$0, _flags+3
+	jne	L57
+L68:
 	movw	%dx, _PC
 	ret
 	.p2align 4,,10
-L50:
+L61:
 	cmpb	$0, _flags
-	je	L57
+	je	L68
 	rep ret
 	.p2align 4,,10
-L51:
+L62:
 	cmpb	$0, _flags+1
-	jne	L57
+	jne	L68
 	rep ret
 	.p2align 4,,10
-L52:
+L63:
 	cmpb	$0, _flags+1
-	je	L57
+	je	L68
 	rep ret
 	.p2align 4,,10
-L53:
+L64:
 	cmpb	$0, _flags+2
-	jne	L57
+	jne	L68
 	rep ret
 	.p2align 4,,10
-L54:
+L65:
 	cmpb	$0, _flags+2
-	je	L57
+	je	L68
 	rep ret
 	.cfi_endproc
 LFE36:
 	.section	.text.unlikely,"x"
-LCOLDE20:
+LCOLDE21:
 	.text
-LHOTE20:
+LHOTE21:
 	.section	.text.unlikely,"x"
-LCOLDB21:
+LCOLDB22:
 	.text
-LHOTB21:
+LHOTB22:
 	.p2align 4,,15
 	.globl	_gotoSubroutine
 	.def	_gotoSubroutine;	.scl	2;	.type	32;	.endef
@@ -577,7 +622,7 @@ LFB37:
 	testb	%al, %al
 	movb	%al, _RP
 	movw	%cx, _RETURN(%edx,%edx)
-	js	L61
+	js	L72
 	movw	%bx, _PC
 	addl	$24, %esp
 	.cfi_remember_state
@@ -587,7 +632,7 @@ LFB37:
 	.cfi_def_cfa_offset 4
 	ret
 	.p2align 4,,10
-L61:
+L72:
 	.cfi_restore_state
 	movl	$7, (%esp)
 	call	_error
@@ -601,13 +646,13 @@ L61:
 	.cfi_endproc
 LFE37:
 	.section	.text.unlikely,"x"
-LCOLDE21:
+LCOLDE22:
 	.text
-LHOTE21:
+LHOTE22:
 	.section	.text.unlikely,"x"
-LCOLDB22:
+LCOLDB23:
 	.text
-LHOTB22:
+LHOTB23:
 	.p2align 4,,15
 	.globl	_returnFromSubroutine
 	.def	_returnFromSubroutine;	.scl	2;	.type	32;	.endef
@@ -621,10 +666,10 @@ LFB38:
 	cmpb	$15, %al
 	movb	%al, _RP
 	movw	%dx, _PC
-	jg	L67
+	jg	L78
 	ret
 	.p2align 4,,10
-L67:
+L78:
 	subl	$28, %esp
 	.cfi_def_cfa_offset 32
 	movl	$8, (%esp)
@@ -635,13 +680,13 @@ L67:
 	.cfi_endproc
 LFE38:
 	.section	.text.unlikely,"x"
-LCOLDE22:
+LCOLDE23:
 	.text
-LHOTE22:
+LHOTE23:
 	.section	.text.unlikely,"x"
-LCOLDB23:
+LCOLDB24:
 	.text
-LHOTB23:
+LHOTB24:
 	.p2align 4,,15
 	.globl	_move
 	.def	_move;	.scl	2;	.type	32;	.endef
@@ -657,13 +702,13 @@ LFB39:
 	.cfi_endproc
 LFE39:
 	.section	.text.unlikely,"x"
-LCOLDE23:
+LCOLDE24:
 	.text
-LHOTE23:
+LHOTE24:
 	.section	.text.unlikely,"x"
-LCOLDB24:
+LCOLDB25:
 	.text
-LHOTB24:
+LHOTB25:
 	.p2align 4,,15
 	.globl	_interrupt
 	.def	_interrupt;	.scl	2;	.type	32;	.endef
@@ -677,7 +722,7 @@ LFB40:
 	.cfi_def_cfa_offset 64
 	cmpb	$0, _flags+4
 	movl	64(%esp), %ebx
-	jne	L69
+	jne	L80
 	movzbl	_RP, %eax
 	movzwl	_PC, %ecx
 	movb	$1, _flags+4
@@ -686,10 +731,10 @@ LFB40:
 	testb	%al, %al
 	movb	%al, _RP
 	movw	%cx, _RETURN(%edx,%edx)
-	js	L74
-L71:
+	js	L85
+L82:
 	cmpb	$8, %bl
-	ja	L72
+	ja	L83
 	movzbl	%bl, %ebx
 	movl	$8, 16(%esp)
 	movl	$16, 20(%esp)
@@ -701,7 +746,7 @@ L71:
 	movl	$64, 44(%esp)
 	movl	16(%esp,%ebx,4), %eax
 	movw	%ax, _PC
-L69:
+L80:
 	addl	$56, %esp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 8
@@ -710,7 +755,7 @@ L69:
 	.cfi_def_cfa_offset 4
 	ret
 	.p2align 4,,10
-L72:
+L83:
 	.cfi_restore_state
 	movl	$1, 64(%esp)
 	addl	$56, %esp
@@ -721,21 +766,21 @@ L72:
 	.cfi_def_cfa_offset 4
 	jmp	_error
 	.p2align 4,,10
-L74:
+L85:
 	.cfi_restore_state
 	movl	$7, (%esp)
 	call	_error
-	jmp	L71
+	jmp	L82
 	.cfi_endproc
 LFE40:
 	.section	.text.unlikely,"x"
-LCOLDE24:
+LCOLDE25:
 	.text
-LHOTE24:
+LHOTE25:
 	.section	.text.unlikely,"x"
-LCOLDB25:
+LCOLDB26:
 	.text
-LHOTB25:
+LHOTB26:
 	.p2align 4,,15
 	.globl	_push
 	.def	_push;	.scl	2;	.type	32;	.endef
@@ -750,11 +795,11 @@ LFB41:
 	movzwl	_SP, %eax
 	movl	32(%esp), %ebx
 	testw	%ax, %ax
-	jne	L76
+	jne	L87
 	movl	$10, (%esp)
 	call	_error
 	movzwl	_SP, %eax
-L76:
+L87:
 	movzbl	_segment+2, %ecx
 	subl	$1, %eax
 	movzbl	%bl, %ebx
@@ -774,13 +819,13 @@ L76:
 	.cfi_endproc
 LFE41:
 	.section	.text.unlikely,"x"
-LCOLDE25:
+LCOLDE26:
 	.text
-LHOTE25:
+LHOTE26:
 	.section	.text.unlikely,"x"
-LCOLDB26:
+LCOLDB27:
 	.text
-LHOTB26:
+LHOTB27:
 	.p2align 4,,15
 	.globl	_pop
 	.def	_pop;	.scl	2;	.type	32;	.endef
@@ -795,8 +840,8 @@ LFB42:
 	movzwl	_SP, %eax
 	movl	32(%esp), %ebx
 	cmpw	$-1, %ax
-	je	L81
-L79:
+	je	L92
+L90:
 	movzbl	_segment+2, %edx
 	movzwl	%ax, %ecx
 	movzbl	%bl, %ebx
@@ -814,22 +859,22 @@ L79:
 	.cfi_def_cfa_offset 4
 	ret
 	.p2align 4,,10
-L81:
+L92:
 	.cfi_restore_state
 	movl	$9, (%esp)
 	call	_error
 	movzwl	_SP, %eax
-	jmp	L79
+	jmp	L90
 	.cfi_endproc
 LFE42:
 	.section	.text.unlikely,"x"
-LCOLDE26:
+LCOLDE27:
 	.text
-LHOTE26:
+LHOTE27:
 	.section	.text.unlikely,"x"
-LCOLDB27:
+LCOLDB28:
 	.text
-LHOTB27:
+LHOTB28:
 	.p2align 4,,15
 	.globl	_ALU
 	.def	_ALU;	.scl	2;	.type	32;	.endef
@@ -849,49 +894,49 @@ LFB43:
 	movl	36(%esp), %esi
 	movl	40(%esp), %ecx
 	cmpb	$9, %dl
-	ja	L83
+	ja	L94
 	movzbl	%dl, %edx
-	jmp	*L85(,%edx,4)
+	jmp	*L96(,%edx,4)
 	.section .rdata,"dr"
 	.align 4
-L85:
-	.long	L83
-	.long	L84
-	.long	L86
-	.long	L87
-	.long	L88
-	.long	L89
-	.long	L90
-	.long	L91
-	.long	L92
-	.long	L93
+L96:
+	.long	L94
+	.long	L95
+	.long	L97
+	.long	L98
+	.long	L99
+	.long	L100
+	.long	L101
+	.long	L102
+	.long	L103
+	.long	L104
 	.text
 	.p2align 4,,10
-L84:
+L95:
 	movl	%esi, %eax
 	movzbl	%bl, %ebx
 	movzbl	%al, %esi
 	movzwl	_registers(%ebx,%ebx), %edx
 	movzwl	_registers(%esi,%esi), %eax
 	addl	%edx, %eax
-L83:
+L94:
 	cmpl	$65535, %eax
-	jle	L94
+	jle	L105
 	movb	$1, _flags
-L96:
+L107:
 	movl	%eax, %ebx
 	shrl	$31, %ebx
 	leal	(%eax,%ebx), %edx
 	andl	$1, %edx
 	subl	%ebx, %edx
 	cmpl	$1, %edx
-	jne	L103
+	jne	L114
 	movb	$1, _flags+3
-L103:
+L114:
 	movzwl	%ax, %ebx
-L98:
+L109:
 	cmpb	$7, %cl
-	ja	L100
+	ja	L111
 	movzbl	%cl, %ecx
 	movw	%ax, _registers(%ecx,%ecx)
 	addl	$20, %esp
@@ -906,7 +951,7 @@ L98:
 	.cfi_def_cfa_offset 4
 	ret
 	.p2align 4,,10
-L100:
+L111:
 	.cfi_restore_state
 	movl	$2, (%esp)
 	call	_error
@@ -922,7 +967,7 @@ L100:
 	.cfi_def_cfa_offset 4
 	ret
 	.p2align 4,,10
-L86:
+L97:
 	.cfi_restore_state
 	movzbl	%bl, %ebx
 	movzwl	_registers(%ebx,%ebx), %eax
@@ -930,27 +975,27 @@ L86:
 	movzbl	%bl, %esi
 	movzwl	_registers(%esi,%esi), %edx
 	subl	%edx, %eax
-L94:
+L105:
 	testl	%eax, %eax
-	jns	L97
+	jns	L108
 	movb	$1, _flags+1
-	jmp	L96
+	jmp	L107
 	.p2align 4,,10
-L88:
+L99:
 	movl	%esi, %eax
 	movzbl	%bl, %ebx
 	movzbl	%al, %esi
 	movzwl	_registers(%ebx,%ebx), %eax
 	orw	_registers(%esi,%esi), %ax
 	movzwl	%ax, %eax
-L97:
+L108:
 	testl	%eax, %eax
-	jne	L96
+	jne	L107
 	movb	$1, _flags+2
 	xorl	%ebx, %ebx
-	jmp	L98
+	jmp	L109
 	.p2align 4,,10
-L93:
+L104:
 	movzbl	%bl, %ebx
 	movsbl	_flags+1, %edx
 	movzwl	_registers(%ebx,%ebx), %eax
@@ -959,40 +1004,40 @@ L93:
 	movzwl	_registers(%esi,%esi), %ebx
 	addl	%ebx, %edx
 	subl	%edx, %eax
-	jmp	L83
+	jmp	L94
 	.p2align 4,,10
-L87:
+L98:
 	movl	%esi, %eax
 	movzbl	%bl, %ebx
 	movzbl	%al, %esi
 	movzwl	_registers(%ebx,%ebx), %eax
 	andw	_registers(%esi,%esi), %ax
 	movzwl	%ax, %eax
-	jmp	L97
+	jmp	L108
 	.p2align 4,,10
-L89:
+L100:
 	movl	%esi, %eax
 	movzbl	%bl, %ebx
 	movzbl	%al, %esi
 	movzwl	_registers(%ebx,%ebx), %eax
 	xorw	_registers(%esi,%esi), %ax
 	movzwl	%ax, %eax
-	jmp	L97
+	jmp	L108
 	.p2align 4,,10
-L90:
+L101:
 	movzbl	%bl, %ebx
 	movzwl	_registers(%ebx,%ebx), %eax
 	addl	%eax, %eax
-	jmp	L83
+	jmp	L94
 	.p2align 4,,10
-L91:
+L102:
 	movzbl	%bl, %ebx
 	movzwl	_registers(%ebx,%ebx), %eax
 	shrw	%ax
 	movzwl	%ax, %eax
-	jmp	L97
+	jmp	L108
 	.p2align 4,,10
-L92:
+L103:
 	movl	%esi, %eax
 	movzbl	%bl, %ebx
 	movzbl	%al, %esi
@@ -1001,17 +1046,17 @@ L92:
 	addl	%edx, %eax
 	movsbl	_flags, %edx
 	addl	%edx, %eax
-	jmp	L83
+	jmp	L94
 	.cfi_endproc
 LFE43:
 	.section	.text.unlikely,"x"
-LCOLDE27:
+LCOLDE28:
 	.text
-LHOTE27:
+LHOTE28:
 	.section	.text.unlikely,"x"
-LCOLDB28:
+LCOLDB29:
 	.text
-LHOTB28:
+LHOTB29:
 	.p2align 4,,15
 	.globl	_ldSegment
 	.def	_ldSegment;	.scl	2;	.type	32;	.endef
@@ -1026,15 +1071,15 @@ LFB44:
 	movl	52(%esp), %ebx
 	movl	48(%esp), %edx
 	cmpw	$15, %bx
-	ja	L111
+	ja	L122
 	cmpb	$1, %dl
-	je	L107
-L112:
-	jb	L108
+	je	L118
+L123:
+	jb	L119
 	cmpb	$2, %dl
-	jne	L104
+	jne	L115
 	movb	%bl, _segment+2
-L104:
+L115:
 	addl	$40, %esp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 8
@@ -1043,15 +1088,15 @@ L104:
 	.cfi_def_cfa_offset 4
 	ret
 	.p2align 4,,10
-L111:
+L122:
 	.cfi_restore_state
 	movl	$6, (%esp)
 	movl	%edx, 28(%esp)
 	call	_error
 	movl	28(%esp), %edx
 	cmpb	$1, %dl
-	jne	L112
-L107:
+	jne	L123
+L118:
 	movb	%bl, _segment+1
 	addl	$40, %esp
 	.cfi_remember_state
@@ -1061,7 +1106,7 @@ L107:
 	.cfi_def_cfa_offset 4
 	ret
 	.p2align 4,,10
-L108:
+L119:
 	.cfi_restore_state
 	movb	%bl, _segment
 	addl	$40, %esp
@@ -1073,13 +1118,13 @@ L108:
 	.cfi_endproc
 LFE44:
 	.section	.text.unlikely,"x"
-LCOLDE28:
+LCOLDE29:
 	.text
-LHOTE28:
+LHOTE29:
 	.section	.text.unlikely,"x"
-LCOLDB29:
+LCOLDB30:
 	.text
-LHOTB29:
+LHOTB30:
 	.p2align 4,,15
 	.globl	_loadSp
 	.def	_loadSp;	.scl	2;	.type	32;	.endef
@@ -1092,13 +1137,13 @@ LFB45:
 	.cfi_endproc
 LFE45:
 	.section	.text.unlikely,"x"
-LCOLDE29:
+LCOLDE30:
 	.text
-LHOTE29:
+LHOTE30:
 	.section	.text.unlikely,"x"
-LCOLDB30:
+LCOLDB31:
 	.text
-LHOTB30:
+LHOTB31:
 	.p2align 4,,15
 	.globl	_setFlag
 	.def	_setFlag;	.scl	2;	.type	32;	.endef
@@ -1107,57 +1152,57 @@ LFB46:
 	.cfi_startproc
 	movl	4(%esp), %eax
 	cmpb	$11, %al
-	ja	L114
+	ja	L125
 	movzbl	%al, %eax
-	jmp	*L117(,%eax,4)
+	jmp	*L128(,%eax,4)
 	.section .rdata,"dr"
 	.align 4
-L117:
-	.long	L116
-	.long	L118
-	.long	L119
-	.long	L120
-	.long	L121
-	.long	L129
-	.long	L123
-	.long	L124
-	.long	L125
-	.long	L126
+L128:
 	.long	L127
-	.long	L128
+	.long	L129
+	.long	L130
+	.long	L131
+	.long	L132
+	.long	L140
+	.long	L134
+	.long	L135
+	.long	L136
+	.long	L137
+	.long	L138
+	.long	L139
 	.text
 	.p2align 4,,10
-L128:
+L139:
 	movb	$1, _flags
 	movb	$1, _flags+1
 	movb	$1, _flags+2
 	movb	$1, _flags+3
-L129:
+L140:
 	movb	$1, _flags+4
-L114:
+L125:
 	rep ret
 	.p2align 4,,10
-L123:
+L134:
 	movb	$0, _flags
 	ret
 	.p2align 4,,10
-L124:
+L135:
 	movb	$0, _flags+1
 	ret
 	.p2align 4,,10
-L125:
+L136:
 	movb	$0, _flags+2
 	ret
 	.p2align 4,,10
-L126:
+L137:
 	movb	$0, _flags+3
+	ret
+	.p2align 4,,10
+L138:
+	movb	$0, _flags+4
 	ret
 	.p2align 4,,10
 L127:
-	movb	$0, _flags+4
-	ret
-	.p2align 4,,10
-L116:
 	movb	$0, _flags
 	movb	$0, _flags+1
 	movb	$0, _flags+2
@@ -1165,31 +1210,31 @@ L116:
 	movb	$0, _flags+4
 	ret
 	.p2align 4,,10
-L118:
+L129:
 	movb	$1, _flags
 	ret
 	.p2align 4,,10
-L119:
+L130:
 	movb	$1, _flags+1
 	ret
 	.p2align 4,,10
-L120:
+L131:
 	movb	$1, _flags+2
 	ret
 	.p2align 4,,10
-L121:
+L132:
 	movb	$1, _flags+3
 	ret
 	.cfi_endproc
 LFE46:
 	.section	.text.unlikely,"x"
-LCOLDE30:
+LCOLDE31:
 	.text
-LHOTE30:
+LHOTE31:
 	.section	.text.unlikely,"x"
-LCOLDB31:
+LCOLDB32:
 	.text
-LHOTB31:
+LHOTB32:
 	.p2align 4,,15
 	.globl	_fetch
 	.def	_fetch;	.scl	2;	.type	32;	.endef
@@ -1210,13 +1255,13 @@ LFB47:
 	.cfi_endproc
 LFE47:
 	.section	.text.unlikely,"x"
-LCOLDE31:
+LCOLDE32:
 	.text
-LHOTE31:
+LHOTE32:
 	.section	.text.unlikely,"x"
-LCOLDB32:
+LCOLDB33:
 	.text
-LHOTB32:
+LHOTB33:
 	.p2align 4,,15
 	.globl	_decode
 	.def	_decode;	.scl	2;	.type	32;	.endef
@@ -1244,13 +1289,13 @@ LFB48:
 	.cfi_endproc
 LFE48:
 	.section	.text.unlikely,"x"
-LCOLDE32:
+LCOLDE33:
 	.text
-LHOTE32:
+LHOTE33:
 	.section	.text.unlikely,"x"
-LCOLDB33:
+LCOLDB34:
 	.text
-LHOTB33:
+LHOTB34:
 	.p2align 4,,15
 	.globl	_execute
 	.def	_execute;	.scl	2;	.type	32;	.endef
@@ -1260,25 +1305,14 @@ LFB49:
 	subl	$28, %esp
 	.cfi_def_cfa_offset 32
 	cmpb	$31, _wordSeg
-	ja	L132
+	ja	L143
 	movzbl	_wordSeg, %eax
-	jmp	*L135(,%eax,4)
+	jmp	*L146(,%eax,4)
 	.section .rdata,"dr"
 	.align 4
-L135:
-	.long	L132
-	.long	L134
-	.long	L136
-	.long	L137
-	.long	L138
-	.long	L139
-	.long	L140
-	.long	L141
-	.long	L142
+L146:
 	.long	L143
-	.long	L144
 	.long	L145
-	.long	L146
 	.long	L147
 	.long	L148
 	.long	L149
@@ -1298,12 +1332,23 @@ L135:
 	.long	L163
 	.long	L164
 	.long	L165
+	.long	L166
+	.long	L167
+	.long	L168
+	.long	L169
+	.long	L170
+	.long	L171
+	.long	L172
+	.long	L173
+	.long	L174
+	.long	L175
+	.long	L176
 	.text
 	.p2align 4,,10
-L161:
+L172:
 	movl	$7, 12(%esp)
 	.p2align 4,,10
-L167:
+L178:
 	movzbl	_wordSeg+3, %eax
 	movl	%eax, 8(%esp)
 	movzbl	_wordSeg+2, %eax
@@ -1311,164 +1356,164 @@ L167:
 	movzbl	_wordSeg+1, %eax
 	movl	%eax, (%esp)
 	call	_ALU
-L132:
+L143:
 	addl	$28, %esp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 4
 	ret
 	.p2align 4,,10
-L164:
+L175:
 	.cfi_restore_state
 	movzbl	_wordSeg+3, %eax
 	movl	%eax, (%esp)
 	call	_setFlag
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L163:
+L174:
 	movzwl	_wordSeg+4, %eax
 	movw	%ax, _SP
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L162:
+L173:
 	movzwl	_wordSeg+4, %eax
 	movl	%eax, 4(%esp)
 	movzbl	_wordSeg+3, %eax
 	movl	%eax, (%esp)
 	call	_ldSegment
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L160:
+L171:
 	movl	$6, 12(%esp)
-	jmp	L167
+	jmp	L178
 	.p2align 4,,10
-L159:
+L170:
 	movl	$5, 12(%esp)
-	jmp	L167
+	jmp	L178
 	.p2align 4,,10
-L158:
+L169:
 	movl	$4, 12(%esp)
-	jmp	L167
+	jmp	L178
 	.p2align 4,,10
-L157:
+L168:
 	movl	$3, 12(%esp)
-	jmp	L167
+	jmp	L178
 	.p2align 4,,10
-L156:
+L167:
 	movl	$9, 12(%esp)
-	jmp	L167
+	jmp	L178
 	.p2align 4,,10
-L155:
+L166:
 	movl	$2, 12(%esp)
-	jmp	L167
+	jmp	L178
 	.p2align 4,,10
-L154:
+L165:
 	movl	$8, 12(%esp)
-	jmp	L167
+	jmp	L178
 	.p2align 4,,10
-L153:
+L164:
 	movl	$1, 12(%esp)
-	jmp	L167
+	jmp	L178
 	.p2align 4,,10
-L152:
+L163:
 	movzbl	_wordSeg+1, %eax
 	movl	%eax, (%esp)
 	call	_pop
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L151:
+L162:
 	movzbl	_wordSeg+1, %eax
 	movl	%eax, (%esp)
 	call	_push
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L150:
+L161:
 	movzbl	_wordSeg+1, %eax
 	movzwl	_registers(%eax,%eax), %edx
 	movzbl	_wordSeg+2, %eax
 	movw	%dx, _registers(%eax,%eax)
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L149:
+L160:
 	movzbl	_wordSeg+3, %eax
 	movl	%eax, (%esp)
 	call	_interrupt
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L148:
+L159:
 	addl	$28, %esp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 4
 	jmp	_returnFromSubroutine
 	.p2align 4,,10
-L147:
+L158:
 	.cfi_restore_state
 	movzwl	_wordSeg+4, %eax
 	movl	%eax, (%esp)
 	call	_gotoSubroutine
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L146:
+L157:
 	movzwl	_wordSeg+4, %eax
 	movl	$7, 4(%esp)
 	movl	%eax, (%esp)
 	call	_jumpif
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L145:
+L156:
 	movzwl	_wordSeg+4, %eax
 	movl	$6, 4(%esp)
 	movl	%eax, (%esp)
 	call	_jumpif
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L144:
+L155:
 	movzwl	_wordSeg+4, %eax
 	movl	$5, 4(%esp)
 	movl	%eax, (%esp)
 	call	_jumpif
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L143:
+L154:
 	movzwl	_wordSeg+4, %eax
 	movl	$4, 4(%esp)
 	movl	%eax, (%esp)
 	call	_jumpif
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L142:
+L153:
 	movzwl	_wordSeg+4, %eax
 	movl	$3, 4(%esp)
 	movl	%eax, (%esp)
 	call	_jumpif
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L141:
+L152:
 	movzwl	_wordSeg+4, %eax
 	movl	$2, 4(%esp)
 	movl	%eax, (%esp)
 	call	_jumpif
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L140:
+L151:
 	movzwl	_wordSeg+4, %eax
 	movl	$1, 4(%esp)
 	movl	%eax, (%esp)
 	call	_jumpif
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L139:
+L150:
 	movzwl	_wordSeg+4, %eax
 	movl	$0, 4(%esp)
 	movl	%eax, (%esp)
 	call	_jumpif
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L138:
+L149:
 	movzwl	_wordSeg+4, %eax
 	movw	%ax, _PC
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L137:
+L148:
 	movzwl	_wordSeg+4, %eax
 	movl	%eax, 12(%esp)
 	movzbl	_wordSeg+3, %eax
@@ -1478,9 +1523,9 @@ L137:
 	movzbl	_wordSeg+1, %eax
 	movl	%eax, (%esp)
 	call	_storeA
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L136:
+L147:
 	movzwl	_wordSeg+4, %eax
 	movl	%eax, 12(%esp)
 	movzbl	_wordSeg+3, %eax
@@ -1490,32 +1535,44 @@ L136:
 	movzbl	_wordSeg+1, %eax
 	movl	%eax, (%esp)
 	call	_loadA
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L134:
+L145:
 	movzbl	_wordSeg+1, %eax
 	movzwl	_wordSeg+4, %edx
 	movw	%dx, _registers(%eax,%eax)
-	jmp	L132
+	jmp	L143
 	.p2align 4,,10
-L165:
+L176:
 	movb	$1, _halt
-	jmp	L132
+	jmp	L143
 	.cfi_endproc
 LFE49:
 	.section	.text.unlikely,"x"
-LCOLDE33:
+LCOLDE34:
 	.text
-LHOTE33:
+LHOTE34:
 	.section	.text.unlikely,"x"
-LCOLDB34:
+LCOLDB35:
 	.text
-LHOTB34:
+LHOTB35:
 	.p2align 4,,15
-	.def	_run.part.2;	.scl	3;	.type	32;	.endef
-_run.part.2:
-LFB58:
+	.globl	_run
+	.def	_run;	.scl	2;	.type	32;	.endef
+_run:
+LFB50:
 	.cfi_startproc
+	movl	4(%esp), %eax
+	testb	%al, %al
+	je	L180
+	cmpb	$1, _flags+4
+	je	L180
+	subl	$1, %eax
+	movzbl	%al, %eax
+	movl	%eax, 4(%esp)
+	jmp	_interrupt
+	.p2align 4,,10
+L180:
 	movzwl	_PC, %eax
 	movzbl	_segment, %ecx
 	leal	1(%eax), %edx
@@ -1543,32 +1600,6 @@ LFB58:
 	andl	$31, %edx
 	movb	%dl, _wordSeg+3
 	jmp	_execute
-	.cfi_endproc
-LFE58:
-	.section	.text.unlikely,"x"
-LCOLDE34:
-	.text
-LHOTE34:
-	.section	.text.unlikely,"x"
-LCOLDB35:
-	.text
-LHOTB35:
-	.p2align 4,,15
-	.globl	_run
-	.def	_run;	.scl	2;	.type	32;	.endef
-_run:
-LFB50:
-	.cfi_startproc
-	movl	4(%esp), %eax
-	testb	%al, %al
-	je	L171
-	subl	$1, %eax
-	movzbl	%al, %eax
-	movl	%eax, 4(%esp)
-	jmp	_interrupt
-	.p2align 4,,10
-L171:
-	jmp	_run.part.2
 	.cfi_endproc
 LFE50:
 	.section	.text.unlikely,"x"
@@ -1725,13 +1756,9 @@ LFB53:
 	subl	$12, %esp
 	.cfi_def_cfa_offset 16
 	call	_kbhit
-	xorl	%edx, %edx
 	testl	%eax, %eax
-	je	L176
-	cmpb	$0, _flags+4
-	je	L188
-L176:
-	movl	%edx, %eax
+	jne	L188
+	xorl	%eax, %eax
 	addl	$12, %esp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 4
@@ -1739,33 +1766,9 @@ L176:
 	.p2align 4,,10
 L188:
 	.cfi_restore_state
-	call	__getch
-	testw	%ax, %ax
-	movzwl	%ax, %edx
-	je	L182
-	cmpw	$224, %ax
-	je	L182
-L177:
-	cmpw	$10, %dx
-	je	L189
-	movl	%edx, _memory+3933180
-	movl	$1, %edx
 	addl	$12, %esp
-	.cfi_remember_state
 	.cfi_def_cfa_offset 4
-	movl	%edx, %eax
-	ret
-	.p2align 4,,10
-L182:
-	.cfi_restore_state
-	call	__getch
-	movzwl	%ax, %edx
-	jmp	L177
-	.p2align 4,,10
-L189:
-	movl	$10, _memory+3933180
-	movl	$1, %edx
-	jmp	L176
+	jmp	_testKeyboard.part.3
 	.cfi_endproc
 LFE53:
 	.section	.text.unlikely,"x"
@@ -1791,31 +1794,31 @@ LFB54:
 	.cfi_def_cfa_offset 32
 	movl	_memory+3932416, %eax
 	testl	%eax, %eax
-	je	L191
+	je	L190
 	movl	_memory+3932412, %edx
 	testl	%edx, %edx
-	jne	L197
-L191:
+	jne	L196
+L190:
 	movl	_memory+3932420, %eax
 	testl	%eax, %eax
-	je	L190
+	je	L189
 	movl	$LC42, (%esp)
 	movl	$0, _memory+3932420
 	call	_system
 	movl	$LC43, (%esp)
 	call	_puts
-L190:
+L189:
 	addl	$28, %esp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 4
 	ret
 	.p2align 4,,10
-L197:
+L196:
 	.cfi_restore_state
 	movl	%eax, (%esp)
 	call	__putch
 	movl	$0, _memory+3932416
-	jmp	L191
+	jmp	L190
 	.cfi_endproc
 LFE54:
 	.section	.text.unlikely,"x"
@@ -1853,26 +1856,24 @@ LFB55:
 	call	_reader
 	movl	$LC43, (%esp)
 	call	_puts
-	jmp	L201
+	jmp	L199
 	.p2align 4,,10
-L205:
-	call	_run.part.2
-L200:
+L198:
+	movl	%eax, (%esp)
+	call	_run
 	call	_display
 	addl	$1, _cycles
 	cmpb	$0, _halt
-	jne	L204
-L201:
-	call	_testKeyboard
-	testb	%al, %al
-	je	L205
-	subl	$1, %eax
-	movzbl	%al, %eax
-	movl	%eax, (%esp)
-	call	_interrupt
-	jmp	L200
+	jne	L205
+L199:
+	call	_kbhit
+	testl	%eax, %eax
+	je	L198
+	call	_testKeyboard.part.3
+	movsbl	%al, %eax
+	jmp	L198
 	.p2align 4,,10
-L204:
+L205:
 	movl	$LC45, (%esp)
 	call	_puts
 	call	_postexec
@@ -1903,12 +1904,12 @@ _RP:
 	.comm	_registers, 16, 2
 	.comm	_memory, 4194304, 5
 	.ident	"GCC: (GNU) 5.3.0"
+	.def	__getch;	.scl	2;	.type	32;	.endef
 	.def	_fopen;	.scl	2;	.type	32;	.endef
 	.def	_fscanf;	.scl	2;	.type	32;	.endef
 	.def	_puts;	.scl	2;	.type	32;	.endef
 	.def	_exit;	.scl	2;	.type	32;	.endef
 	.def	_printf;	.scl	2;	.type	32;	.endef
 	.def	_kbhit;	.scl	2;	.type	32;	.endef
-	.def	__getch;	.scl	2;	.type	32;	.endef
 	.def	_system;	.scl	2;	.type	32;	.endef
 	.def	__putch;	.scl	2;	.type	32;	.endef
