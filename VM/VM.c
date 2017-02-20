@@ -164,7 +164,7 @@ char testKeyboard(void)
         if (keypress == 10) {
             memory[15][255] = '\n';
         }
-        else{
+        else {
             memory[15][255] = keypress;
         }
         return 1; //0+1
