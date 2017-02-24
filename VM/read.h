@@ -12,9 +12,9 @@ void reader(char file[BUFSIZ])
         exit(1);
     }
     
-    unsigned int data;
-    char segment;
-    unsigned short address;
+    uint32_t data;
+    uint8_t segment;
+    uint16_t address;
     
     readState mode = ROMINSERT;
     while(1) { //file reading
