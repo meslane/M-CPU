@@ -50,7 +50,7 @@ void gotoA(halfword immediate)
     jump(immediate);
 }
 
-void jumpif(halfword immediate, char condition) //mode = subop, address = IR[1]
+void jumpif(halfword immediate, byte condition) //mode = subop, address = IR[1]
 {
     //mode designates what branch if to execute 
     //address designates address to jump to if branch is not rejected 
@@ -160,7 +160,7 @@ void pop(byte r1)
     SP++; //decrease stack size to remove now-vacant entry
 }
 
-word ALU(byte r1, byte r2, byte r3, char operation) //r3 = subop
+word ALU(byte r1, byte r2, byte r3, byte operation) //r3 = subop
 {
     int result;
     switch (operation) {

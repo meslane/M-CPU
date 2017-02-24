@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <conio.h>
 #include <windows.h>
 
 //header file for all EVIL global variables needed to store VM values 
 
-typedef unsigned int word;
-typedef unsigned short halfword;
-typedef unsigned char byte;
+typedef uint32_t word;
+typedef uint16_t halfword;
+typedef uint8_t byte;
 
 enum states {F, T};
 enum operations {NONE, ADD, SUB, AND, OR, XOR, LSHIFT, RSHIFT, ADC, SBB};
@@ -40,11 +41,11 @@ typedef struct {
 
 //flags 
 typedef struct {
-    char C; //carry
-    char N; //negative
-    char Z; //zero
-    char P; //parity
-    char I; //interrupt
+    uint8_t C; //carry
+    uint8_t N; //negative
+    uint8_t Z; //zero
+    uint8_t P; //parity
+    uint8_t I; //interrupt
 } flag;
 
 //inaccessible registers
@@ -63,10 +64,10 @@ segPointer segment;
 flag flags;
 
 halfword RETURN[16]; //Return address call stack for subroutine calls
-char RP = 15; //call stack pointer 
+int8_t RP = 15; //call stack pointer 
 
 word IR; //instruction register
 
-unsigned long cycles;
+uint64_t cycles;
 
-char halt;
+byte halt;

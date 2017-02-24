@@ -127,7 +127,7 @@ void execute(void)
     }
 }
 
-void run(char interruptStatus)
+void run(int8_t interruptStatus)
 {
     if (interruptStatus == 0 || flags.I == 1) {
         fetch(); 
@@ -153,10 +153,10 @@ void postexec(void)
     printf("A:%i B:%i C:%i D:%i E:%i X:%i Y:%i Z:%i SP:%i RP:%i RS:%i MS:%i SS:%i C:%i N:%i Z:%i P:%i I:%i Cycles:%lu\n",registers[0],registers[1],registers[2],registers[3],registers[4],registers[5],registers[6],registers[7], SP, RP, segment.RS, segment.MS, segment.SS, flags.C, flags.N, flags.Z, flags.P, flags.I, cycles);
 }
 
-char testKeyboard(void)
+int8_t testKeyboard(void)
 {
     if (kbhit()) { //if key is pressed
-        unsigned short keypress;
+        uint16_t keypress;
         keypress = _getch(); //record keypress
         if (keypress == 0 || keypress == 224) {
             keypress = _getch();

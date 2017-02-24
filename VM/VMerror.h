@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
-unsigned char error(unsigned char errnum)
+uint8_t error(uint8_t errnum)
 {
      /*
      * ERROR = VM will not halt, but instruction is skipped

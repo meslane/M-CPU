@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 
 #define MIN 0
@@ -51,7 +52,7 @@ typedef enum {
     Z
 } reg; //register but that's a reserved C keyword 
 
-char getReg(char fileInput, unsigned long line) //take ascii char and return file array position
+char getReg(char fileInput, uint64_t line) //take ascii char and return file array position
 {
     char out;
     if (fileInput >= 65 && fileInput <= 69) {
@@ -76,7 +77,7 @@ char getReg(char fileInput, unsigned long line) //take ascii char and return fil
     return out;
 }
 
-char getSr(char fileInput[2], unsigned long line)
+char getSr(char fileInput[2], uint64_t line)
 {
     if (strcmp(fileInput, "RS") == 0 || strcmp(fileInput, "rs") == 0) { 
         return 0;
@@ -89,7 +90,7 @@ char getSr(char fileInput[2], unsigned long line)
     }
 }
 
-void testSubop(unsigned int subop, unsigned long line) 
+void testSubop(uint32_t subop, uint64_t line) 
 {
     if (subop > 2) {
         printf("SYNTAX ERROR: Invalid Subop, instruction %lu\n", line);
@@ -105,7 +106,7 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
     inF = fopen(inputFile, "r");
     outF = fopen(outputFile, "w");
     
-    unsigned long line = 1;
+    uint64_t line = 1;
     
     char segR[BUFSIZ];
     char temp[BUFSIZ];
@@ -114,15 +115,15 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
         segR[0] = '\0';
         temp[0] = '\0';
         
-        int scanReturn = fscanf(inF, "%16s",&temp); //analyse first string and branch into if statement 
+        int32_t scanReturn = fscanf(inF, "%16s",&temp); //analyse first string and branch into if statement 
         if (scanReturn != EOF) { 
-            char opcode = 0, r1 = 0, r2 = 0, r3 = 0; //set read values to zero just in case 
-            unsigned int subop = 0, immediate = 0, output = 0;
+            int8_t opcode = 0, r1 = 0, r2 = 0, r3 = 0; //set read values to zero just in case 
+            uint32_t subop = 0, immediate = 0, output = 0;
         
             if (strcmp(temp, "SEG") == 0 || strcmp(temp, "seg") == 0) { //addressing
-                unsigned int seg;
+                uint32_t seg;
                 char stringTemp[20];
-                unsigned int address;
+                uint32_t address;
                 fscanf(inF, " %x %16s %x%*[^\n]\n", &seg, &stringTemp, &address);
                 if (strcmp(stringTemp, "ADDRESS") != 0 && strcmp(stringTemp, "address") != 0) {
                     printf("SYNTAX ERROR: instruction %lu\n", line);
@@ -377,7 +378,7 @@ void reader(char inputFile[BUFSIZ], char outputFile[BUFSIZ])
     }
 }
 
-int main(int argc, char *argv[])
+int32_t main(int32_t argc, char *argv[])
 {
     reader(argv[1], argv[2]);
 }
