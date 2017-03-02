@@ -1,0 +1,141 @@
+SEG 0 ADDRESS 0
+GOTO 64
+
+SEG 0 ADDRESS 64
+LSP ffff ;set stack 
+LSG MS f ;set memory segment to 15
+LDI C 4
+LDI D 1
+STA C N 0 3f ;set ouput enable
+GSR aaa ;setup output array 
+LDI A 7777 ;load A 
+GOTO ff
+
+SEG 0 ADDRESS 8
+RSR ;ignore keyboard
+
+SEG 0 ADDRESS fa ;print newline twice
+LDI B a
+STA B N 0 40 
+STA B N 0 40
+SETF 0 ;reset flags 
+
+SEG 0 ADDRESS ff
+MOV A D ;test if one or not 
+LDI B 1 
+SUB D B D 
+JUMPIFZ 1cc
+GSR fff ;print value 
+GSR 1500 ;sleep
+ADD A C A ;add to zero to determine parity 
+JUMPIFP 1aa ;goto multiply by three and add one if number is odd 
+JUMPIFNP 1bb ;goto divide by two if number is even 
+
+SEG 0 ADDRESS 1aa
+MOV A B ;save a 
+ADD A A A ;*2
+ADD A B A ;*3 
+LDI B 1 
+ADD A B A ;add one 
+GOTO 101 
+
+SEG 0 ADDRESS 1bb
+RSHIFT A A ;rightshift one (same as divide by two)
+GOTO 101 
+
+SEG 0 ADDRESS 1cc
+LDI A 7777 ;load again
+SETF 8 ;set Z to 0 
+GOTO ff 
+
+SEG 0 ADDRESS aaa ;char array setup subroutine 
+LDI A 30 
+STA A N 0 0 
+LDI A 31 
+STA A N 0 1
+LDI A 32 
+STA A N 0 2
+LDI A 33 
+STA A N 0 3
+LDI A 34 
+STA A N 0 4
+LDI A 35 
+STA A N 0 5
+LDI A 36 
+STA A N 0 6
+LDI A 37 
+STA A N 0 7
+LDI A 38 
+STA A N 0 8
+LDI A 39 
+STA A N 0 9
+LDI A 41 
+STA A N 0 a
+LDI A 42 
+STA A N 0 b
+LDI A 43 
+STA A N 0 c
+LDI A 44 
+STA A N 0 d
+LDI A 45 
+STA A N 0 e
+LDI A 46 
+STA A N 0 f               
+RSR
+
+SEG 0 ADDRESS bbb ;masking loop subroutine 
+;register B = for loop perameter
+;register A = value to be shifted 
+LDI C 1
+SUB B C B 
+RSHIFT A A
+JUMPIFNZ bbc
+LDI B f
+AND A B A ;mask to 4 bits 
+SETF 8 ;reset zero flag to zero 
+RSR 
+
+SEG 0 ADDRESS fff ;printing subroutine  
+PUSH A
+PUSH A
+MOV A D
+LDI B c ;first for loop 
+GSR bbb
+MOV A E ;store first nibble 
+POP A ;restore A
+PUSH A ;save A 
+LDI B 8 ;second for loop
+GSR bbb
+MOV A X ;store second nibble 
+POP A ;restore A
+PUSH A ;save A 
+LDI B 4 ;third for loop
+GSR bbb 
+MOV A Y ;store third nibble
+POP A ;restore A
+MOV A Z
+LDI B f
+AND Z B Z ;mask Z
+LDA E E 1 0 ;load registers with array char value 
+LDA X X 1 0
+LDA Y Y 1 0
+LDA Z Z 1 0
+STA E N 0 3f ;output enable 
+STA E N 0 40 ;output 
+STA X N 0 40
+STA Y N 0 40 
+STA Z N 0 40
+LDI Z a
+STA Z N 0 40
+LDI B 0
+LDI C 0  
+LDI E 0 
+LDI X 0
+LDI Y 0
+LDI Z 0 ;clear everything that was used 
+POP A
+SETF 0 ;clear all flags  
+RSR 
+
+SEG 0 ADDRESS 1600
+RSR
