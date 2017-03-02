@@ -4,8 +4,6 @@
 #include <conio.h>
 #include <windows.h>
 
-//header file for all EVIL global variables needed to store VM values 
-
 typedef uint32_t word;
 typedef uint16_t halfword;
 typedef uint8_t byte;
