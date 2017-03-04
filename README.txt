@@ -36,7 +36,7 @@ HALT: halt vm
 
 
 REGISTERS:
-The M-CPU has 8 general-puropse data registers:
+The M-CPU has 8 general-purpose data registers:
 (A, B, C, D, E, X, Y, Z)
 A program counter:
 (PC)
@@ -54,13 +54,13 @@ And Five flags:
 
 MEMORY:
 The M-CPU has 16 segments of 65536 words of memory, or 4 megabytes total.
-Each segment pointer addresses a different segment to be used for different puropses.
+Each segment pointer addresses a different segment to be used for different purposes.
 However, multiple pointers CAN point to the same segment. 
 Since each word is stored in a single memory location, the M-CPU has no defined endianness, but arrays are ideally big-endian while the stacks grow from the highest to lowest address.
 
 
 THE STACKS:
-The M-CPU has a stack in memory and a seperate isolated call stack for return addresses.
+The M-CPU has a stack in memory and a separate isolated call stack for return addresses.
 The call stack is only accessible via the GSR and RSR instructions, and can go 16 subroutine levels deep before overflowing.
 If the call stack overflows, the M-CPU will raise an error and halt immediately.  
 The general-purpose stack is accessed via the PUSH and POP instructions, can be used to hold any data and can occupy an entire segment (65536 addresses) before overflowing.
@@ -99,7 +99,7 @@ b: all flags = 1
 
 ADDRESSING MODES:
 Addressing modes are used with the LDA and STA instructions and defined by the subop, they are as follows:
-0 = immedate 
+0 = immediate 
 1 = register 2 
 2 = register 2 + immediate 
 
@@ -121,4 +121,3 @@ The M-CPU has eight interrupt vectors of 8 words each located at 0x8 to 0x40.
 Each interrupt can be called by using the INT instruction and otherwise functions just like a subroutine. 
 Whenever an interrupt is called, the I flag is set. When the I flag is active, all other interrupts will be ignored.
 The I flag is set by the M-CPU but is not reset by it, therefore, the programmer must set I to 0 after every interrupt service request.
-
